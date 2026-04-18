@@ -1,0 +1,256 @@
+/* Landing: #040035 base, black gradients, white text */
+
+/* Плавный скролл по якорям + отступ под фиксированный хедер (~4.25rem + запас) */
+html:has(.landing-root) {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.landing-root) {
+    scroll-behavior: auto;
+  }
+}
+
+.landing-section {
+  position: relative;
+  z-index: 10;
+}
+
+.landing-tools-pin {
+  position: relative;
+  background: radial-gradient(
+      ellipse 65% 65% at 50% 45%,
+      rgba(255, 255, 255, 0.08),
+      transparent 62%
+    ),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent 40%, rgba(0, 0, 0, 0.35));
+}
+
+.landing-tools-viewport {
+  overflow: hidden;
+}
+
+.landing-tools-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.landing-tool-panel {
+  width: 100vw;
+  min-height: min(92vh, 760px);
+  border-right: 1px solid var(--landing-line);
+  background: color-mix(in oklab, var(--landing-bg) 78%, #000000);
+}
+
+.landing-tool-panel:last-child {
+  border-right: 0;
+}
+
+.landing-display-font {
+  font-family: var(--font-landing-display), ui-sans-serif, system-ui;
+}
+
+.landing-root {
+  --landing-bg: #040035;
+  --landing-fg: #ffffff;
+  --landing-muted: rgba(255, 255, 255, 0.62);
+  --landing-accent: #ffffff;
+  --landing-accent-soft: rgba(255, 255, 255, 0.12);
+  --landing-line: rgba(255, 255, 255, 0.14);
+  --landing-glow: rgba(255, 255, 255, 0.1);
+  background-color: var(--landing-bg);
+  background-image: linear-gradient(
+    155deg,
+    #000000 0%,
+    #040035 34%,
+    #040035 58%,
+    #010008 100%
+  );
+  color: var(--landing-fg);
+}
+
+.landing-grain {
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.035;
+}
+
+.landing-aurora {
+  background: radial-gradient(
+      ellipse 100% 70% at 50% -15%,
+      #000000 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 70% 55% at 95% 25%,
+      rgba(0, 0, 0, 0.55) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse 85% 65% at 5% 70%,
+      rgba(4, 0, 53, 0.95) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 80% 50% at 50% 105%,
+      #000000 0%,
+      transparent 50%
+    ),
+    #040035;
+  filter: blur(0px);
+  animation: landing-aurora-shift 18s ease-in-out infinite alternate;
+}
+
+@keyframes landing-aurora-shift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate3d(2%, -1%, 0) scale(1.03);
+    opacity: 0.92;
+  }
+  100% {
+    transform: translate3d(-1%, 2%, 0) scale(1.01);
+    opacity: 1;
+  }
+}
+
+.landing-hero-line {
+  display: block;
+  overflow: hidden;
+}
+
+.landing-hero-line-inner {
+  display: inline-block;
+  animation: landing-hero-rise 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-hero-line:nth-child(1) .landing-hero-line-inner {
+  animation-delay: 0.08s;
+}
+.landing-hero-line:nth-child(2) .landing-hero-line-inner {
+  animation-delay: 0.2s;
+}
+.landing-hero-line:nth-child(3) .landing-hero-line-inner {
+  animation-delay: 0.32s;
+}
+
+@keyframes landing-hero-rise {
+  from {
+    transform: translate3d(0, 108%, 0) rotate(0.6deg);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.landing-blur-in {
+  animation: landing-blur-in 0.8s ease-out 0.45s both;
+}
+
+@keyframes landing-blur-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.landing-shimmer-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-shimmer-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 45%,
+    transparent 80%
+  );
+  transform: translateX(-120%);
+  animation: landing-shimmer-sweep 2.8s ease-in-out infinite;
+}
+
+@keyframes landing-shimmer-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  45% {
+    transform: translateX(120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+.landing-orbit-dot {
+  animation: landing-orbit-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes landing-orbit-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+}
+
+.landing-card-float {
+  animation: landing-card-float 7s ease-in-out infinite;
+}
+
+@keyframes landing-card-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+.landing-reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-aurora,
+  .landing-hero-line-inner,
+  .landing-blur-in,
+  .landing-shimmer-bar::after,
+  .landing-orbit-dot,
+  .landing-card-float {
+    animation: none !important;
+  }
+  .landing-hero-line-inner {
+    transform: none;
+    opacity: 1;
+  }
+  .landing-blur-in {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  .landing-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
