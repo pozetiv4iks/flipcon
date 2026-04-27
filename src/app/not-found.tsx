@@ -33,7 +33,7 @@ export default function NotFound() {
   }, []);
 
   return (
-    <div ref={containerRef} className="bg-[#020408] text-slate-100 min-h-screen flex items-center justify-center font-sans relative overflow-hidden px-6">
+    <div ref={containerRef} className="text-slate-100 min-h-screen flex items-center justify-center font-sans relative overflow-hidden px-6">
       
       {/* Анимированный шум на фоне */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>

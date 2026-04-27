@@ -13,11 +13,11 @@ export function LandingTools() {
             Возможности
           </p>
           <h2 className="landing-reveal landing-display-font mt-4 text-4xl font-extrabold tracking-tight md:text-6xl">
-            Инструменты
+            Четыре витка продукта
           </h2>
           <p className="landing-reveal mt-4 text-[var(--landing-muted)] md:text-lg">
-            Четыре опоры — от входящих до границ доступа. Крупные заголовки и
-            сетка вместо бесконечных подменю.
+            От репозитория к рынку, от плана — к людям, от идеи в хакатоне — к
+            проверке, нужна ли она стартапу в сегодняшнем смысле.
           </p>
         </div>
       </div>
@@ -30,7 +30,7 @@ export function LandingTools() {
                 key={tool.slug}
                 className="landing-tool-panel landing-tool-card group"
               >
-                <div className="landing-reveal mx-auto flex h-full max-w-[1200px] flex-col justify-center px-5 py-16 sm:px-6 md:px-10">
+                <div className="mx-auto flex h-full max-w-[1200px] flex-col justify-center px-5 py-16 sm:px-6 md:px-10">
                   <div className="mb-10 flex items-start justify-between gap-4">
                     <span className="text-[var(--landing-muted)]">{tool.icon}</span>
                     <span className="rounded-full border border-[var(--landing-line)] px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--landing-muted)]">

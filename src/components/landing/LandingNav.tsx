@@ -2,6 +2,9 @@
 
 import { useState, type RefObject } from "react";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { BrandTextLogo } from "./BrandTextLogo";
 import { NAV_LINKS } from "./content";
 
 type Props = {
@@ -14,11 +17,20 @@ export function LandingNav({ magneticBtnRef }: Props) {
   return (
     <header className="fixed top-0 z-[70] w-full border-b border-[var(--landing-line)] bg-[color-mix(in_oklab,var(--landing-bg)_72%,transparent)] backdrop-blur-xl">
       <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between px-5 sm:px-6">
-        <a href="/" className="group flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[var(--landing-line)] bg-[var(--landing-accent-soft)] text-sm font-semibold tracking-tight text-[var(--landing-accent)] transition-transform duration-300 group-hover:-rotate-6">
-            fc
+        <a href="/" className="group flex items-center gap-2.5 sm:gap-3">
+          <span className="flex h-10 w-10 ">
+            <Image
+              src="/images/logo.png"
+              alt="flipcon"
+              width={32}
+              height={32}
+              className="h-full w-full object-contain"
+              priority
+            />
           </span>
-          <span className="text-lg font-semibold tracking-tight">flipcon</span>
+          <span className="block min-w-0">
+            <BrandTextLogo priority className="max-w-[min(200px,42vw)]" />
+          </span>
         </a>
 
         <nav className="hidden items-center gap-10 md:flex" aria-label="Основное">
@@ -32,12 +44,12 @@ export function LandingNav({ magneticBtnRef }: Props) {
             </a>
           ))}
           <div ref={magneticBtnRef}>
-            <a
-              href="#cta"
+            <Link
+              href={"/login"}
               className="inline-flex rounded-full bg-[var(--landing-fg)] px-5 py-2 text-sm font-semibold text-[var(--landing-bg)] transition-[transform,box-shadow] duration-300 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.35)]"
             >
-              Войти в список
-            </a>
+              Войти в аккаунт
+            </Link>
           </div>
         </nav>
 

@@ -9,11 +9,11 @@ export function LandingCTA() {
           Старт
         </p>
         <h2 className="landing-display-font mt-6 text-[clamp(2.25rem,6vw,4rem)] font-extrabold leading-[1.05] tracking-[-0.03em]">
-          Готовы убрать шум из очереди?
+          Свести гит, людей и рынок в одну петлю?
         </h2>
         <p className="mt-6 text-pretty text-[var(--landing-muted)] md:text-lg">
-          Ранний доступ по приглашению — оставьте контакт, мы напишем, когда
-          будет не стыдно показать продукт.
+          Ранний контур — сначала пилот с вашим репо, командой и форматом (продукт
+          или венчур/хакатон). Напишите, что важно не потерять по дороге.
         </p>
         <div className="relative mx-auto mt-12 inline-block w-full max-w-md">
           <div className="pointer-events-none absolute inset-0 rounded-full bg-[var(--landing-fg)] opacity-15 blur-3xl" />
@@ -21,7 +21,7 @@ export function LandingCTA() {
             href="/registraition"
             className="relative inline-flex h-16 w-full items-center justify-center rounded-full bg-[var(--landing-fg)] px-10 text-sm font-semibold text-[var(--landing-bg)] transition-[transform,filter] hover:brightness-110 active:scale-[0.99]"
           >
-            Оставить контакт
+            Подобрать пилот
           </a>
         </div>
       </div>

@@ -1,9 +1,5 @@
-"use client";
-
-import Main from "@/src/app/layouts/page/Main";
-import LandingPage from "@/src/components/landing/LandingPage";
+import RegistrationPage from "@/src/components/login/RegistrationPage";
 
 export default function Page() {
-  const isAuthorithed = false;
-  return <>{isAuthorithed ? <Main /> : <LandingPage />}</>;
+  return <RegistrationPage />;
 }

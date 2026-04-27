@@ -1,3 +1,4 @@
+import { BrandTextLogo } from "./BrandTextLogo";
 import { KineticHeadline } from "./KineticHeadline";
 import { HERO_KINETIC_LINES } from "./content";
 
@@ -7,15 +8,21 @@ export function LandingHero() {
       <div className="pointer-events-none absolute inset-x-0 top-1/4 -z-10 h-[min(50vh,480px)] bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,var(--landing-glow),transparent_65%)] blur-3xl" aria-hidden />
 
       <div className="mx-auto w-full max-w-[1200px]">
-        <p className="landing-blur-in mb-8 max-w-xl text-xs font-semibold uppercase tracking-[0.35em] text-[var(--landing-muted)] md:text-sm">
-          flipcon — очередь без шума
+        <p className="landing-blur-in mb-8 flex max-w-xl flex-wrap items-center gap-2.5 text-[var(--landing-muted)]">
+          <BrandTextLogo priority className="h-5 sm:h-6" />
+          <span className="text-xs font-semibold uppercase tracking-[0.35em] md:text-sm">
+            — бизнес-аналитика через нейросеть
+          </span>
         </p>
 
         <KineticHeadline lines={HERO_KINETIC_LINES} />
 
         <p className="landing-blur-in mt-10 max-w-2xl text-pretty text-base leading-relaxed text-[var(--landing-muted)] md:mt-14 md:text-xl md:leading-snug">
-          Профессиональный инструмент для команд: одна ясная лента задач вместо
-          десяти чатов. Сфокусируйтесь на сути — мы держим порядок и темп.
+          Создаётся единая картина: что происходит в репо, в разговоре с командой и
+          на рынке. Система подскажет, кому поставить дедлайн исходя из стэка и
+          загруженности. В персональной таблице — задачи, нейронка ведёт ТЗ, опираясь
+          на гит, а для венчура и хакатонов — ветвит идеи и сопоставит их с трекшном
+          и реальностью, чтобы у стартапа оставалась управляемая тропа.
         </p>
 
         <div className="landing-blur-in mt-10 flex flex-col gap-4 sm:mt-12 sm:flex-row sm:items-center sm:gap-5">

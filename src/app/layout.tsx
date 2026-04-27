@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Flipcon",
   description: "Flipcon",
+  icons: {
+    icon: "/images/favicon.ico",
+  },
 };
 
 export default function RootLayout({

@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { LayoutGrid, Users, Zap, Sparkles, ChevronRight, Menu, X, ArrowRight, ShieldCheck, Globe } from 'lucide-react';
+import { MainPageLine } from '@/src/components/assets/MainPageLine';
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
@@ -83,35 +84,13 @@ const Main = () => {
   }, []);
 
   return (
-    <div ref={mainRef} className="bg-[#020408] text-slate-100 min-h-screen font-sans selection:bg-blue-500 relative overflow-x-hidden">
+    <div ref={mainRef} className="text-slate-100 min-h-screen font-sans selection:bg-blue-500 relative overflow-x-hidden">
       
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[100] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
 
-      <svg 
-        className="absolute left-1/2 -translate-x-1/2 top-0 z-0 pointer-events-none hidden md:block"
-        width="1000" 
-        height="100%" 
-        viewBox="0 0 1000 6000" 
-        fill="none" 
-        preserveAspectRatio="xMidYMin slice"
-      >
-        <path 
-          ref={pathRef}
-          d="M500,0 C600,500 400,800 500,1500 C650,2200 350,2800 500,3500 C700,4200 300,4800 500,5500 L500,6000" 
-          stroke="url(#lineGradient)" 
-          strokeWidth="1.5" 
-          strokeLinecap="round"
-          className="opacity-30"
-        />
-        <defs>
-          <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#2563eb" />
-            <stop offset="100%" stopColor="#60a5fa" />
-          </linearGradient>
-        </defs>
-      </svg>
+      <MainPageLine pathRef={pathRef} />
 
-      <nav className="fixed top-0 w-full z-[70] backdrop-blur-xl border-b border-white/5 bg-[#020408]/60">
+      <nav className="fixed top-0 w-full z-[70] backdrop-blur-xl border-b border-white/5 bg-[#040035]/60">
         <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center font-bold">F</div>
@@ -135,7 +114,7 @@ const Main = () => {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden absolute top-20 left-0 w-full bg-[#020408] border-b border-white/10 p-6 flex flex-col gap-6 animate-in slide-in-from-top-5">
+          <div className="md:hidden absolute top-20 left-0 w-full bg-[#040035] border-b border-white/10 p-6 flex flex-col gap-6 animate-in slide-in-from-top-5">
             {['Product', 'Features', 'Pricing'].map(item => (
               <a key={item} href="#" className="text-lg font-medium">{item}</a>
             ))}
