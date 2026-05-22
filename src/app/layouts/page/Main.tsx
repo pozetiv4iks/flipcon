@@ -93,7 +93,7 @@ const Main = () => {
       <nav className="fixed top-0 w-full z-[70] backdrop-blur-xl border-b border-white/5 bg-[#040035]/60">
         <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center font-bold">F</div>
+            <div className="w-9 h-9 bg-white text-black rounded-xl flex items-center justify-center font-bold">F</div>
             <span className="text-xl font-bold tracking-tighter">Flipcon</span>
           </div>
 
@@ -118,7 +118,7 @@ const Main = () => {
             {['Product', 'Features', 'Pricing'].map(item => (
               <a key={item} href="#" className="text-lg font-medium">{item}</a>
             ))}
-            <button className="w-full bg-blue-600 py-4 rounded-xl font-bold">Get Started</button>
+            <button className="w-full bg-white text-black py-4 rounded-xl font-bold">Get Started</button>
           </div>
         )}
       </nav>
@@ -127,13 +127,13 @@ const Main = () => {
         <div ref={glowRef} className="absolute top-20 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[300px] bg-blue-500/10 blur-[100px] rounded-full"></div>
         <h1 className="hero-title text-5xl sm:text-7xl md:text-[110px] font-black tracking-tighter mb-8 leading-[1] md:leading-[0.8] flex flex-col items-center">
           <span className="block">STREAMLINE</span>
-          <span className="text-blue-500 block uppercase">EVERY TASK.</span>
+          <span className="text-white block uppercase">EVERY TASK.</span>
         </h1>
         <p className="text-slate-500 max-w-xl mx-auto text-base md:text-xl font-medium mb-10 px-4">
           Мы проложили путь. Вам остается только следовать за нитью вашего успеха.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-           <button className="w-full sm:w-auto bg-blue-600 px-10 py-4 rounded-2xl font-bold hover:shadow-[0_0_30px_rgba(37,99,235,0.4)] transition-all">
+           <button className="w-full sm:w-auto bg-white text-black px-10 py-4 rounded-2xl font-bold hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all">
              Попробовать сейчас
            </button>
         </div>
@@ -148,7 +148,7 @@ const Main = () => {
             { label: "Countries", val: "24", suffix: "" }
           ].map((stat, i) => (
             <div key={i} className="text-center">
-              <div className="text-3xl md:text-5xl font-black text-blue-500 mb-2 flex justify-center">
+              <div className="text-3xl md:text-5xl font-black text-white mb-2 flex justify-center">
                 <span className="stat-value">{stat.val}</span>{stat.suffix}
               </div>
               <div className="text-xs md:text-sm text-slate-500 font-bold uppercase tracking-widest">{stat.label}</div>
@@ -164,8 +164,8 @@ const Main = () => {
             { t: "Collaborative", d: "Команды синхронны как никогда в режиме реального времени.", icon: <Users /> },
             { t: "Fast", d: "От идеи до релиза за считанные часы благодаря шаблонам.", icon: <Sparkles /> }
           ].map((item, i) => (
-            <div key={i} className="parallax-card p-8 md:p-10 rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-xl group hover:border-blue-500/30 transition-all">
-              <div className="mb-6 text-blue-500 w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div key={i} className="parallax-card p-8 md:p-10 rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-xl group hover:border-white/30 transition-all">
+              <div className="mb-6 text-white w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 {item.icon}
               </div>
               <h3 className="text-2xl font-bold mb-4">{item.t}</h3>
@@ -178,28 +178,28 @@ const Main = () => {
       <section className="py-20 md:py-40 px-6 z-10 relative">
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16 md:gap-24">
           <div className="flex-1 text-center lg:text-left">
-            <div className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-xs font-bold mb-6 border border-blue-500/20">
+            <div className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-white text-xs font-bold mb-6 border border-white/20">
               SMART INTERFACE
             </div>
-            <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight leading-tight">Нить управления в <br className="hidden md:block"/><span className="italic text-blue-500">ваших руках.</span></h2>
+            <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight leading-tight">Нить управления в <br className="hidden md:block"/><span className="italic text-white">ваших руках.</span></h2>
             <p className="text-slate-400 text-lg mb-10 max-w-lg mx-auto lg:mx-0">
               Flipcon использует алгоритмы глубокого обучения для приоритизации задач. Больше никакой рутины — только чистый прогресс.
             </p>
-            <div className="flex items-center justify-center lg:justify-start gap-4 text-blue-400 font-bold cursor-pointer group">
+            <div className="flex items-center justify-center lg:justify-start gap-4 text-white font-bold cursor-pointer group">
                Explore Intelligence <ArrowRight className="group-hover:translate-x-2 transition-transform"/>
             </div>
           </div>
           
           <div className="flex-1 w-full relative">
-            <div className="absolute inset-0 bg-blue-600/20 blur-[80px] rounded-full scale-75"></div>
-            <div className="floating-card p-6 md:p-10 rounded-[2.5rem] bg-[#0a0f18]/90 border border-blue-500/20 shadow-2xl relative z-20 backdrop-blur-2xl">
+            <div className="absolute inset-0 bg-white/10 blur-[80px] rounded-full scale-75"></div>
+            <div className="floating-card p-6 md:p-10 rounded-[2.5rem] bg-[#0a0f18]/90 border border-white/20 shadow-2xl relative z-20 backdrop-blur-2xl">
               <div className="flex justify-between items-center mb-10">
-                <div className="h-2 w-20 bg-blue-500/40 rounded-full"></div>
-                <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></div>
+                <div className="h-2 w-20 bg-white/20 rounded-full"></div>
+                <div className="w-3 h-3 rounded-full bg-white animate-pulse"></div>
               </div>
               <div className="space-y-4 mb-10">
                 <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-600 w-2/3 shadow-[0_0_15px_rgba(37,99,235,1)]"></div>
+                  <div className="h-full bg-white w-2/3 shadow-[0_0_15px_rgba(255,255,255,0.5)]"></div>
                 </div>
                 <div className="h-3 w-4/5 bg-white/5 rounded-full"></div>
               </div>
@@ -220,14 +220,14 @@ const Main = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 flex gap-6 items-start">
-              <div className="p-4 bg-blue-600/10 rounded-2xl text-blue-500"><ShieldCheck size={32}/></div>
+              <div className="p-4 bg-white/10 rounded-2xl text-white"><ShieldCheck size={32}/></div>
               <div>
                 <h4 className="text-xl font-bold mb-2">Security First</h4>
                 <p className="text-sm text-slate-500">Ваши данные зашифрованы по протоколу AES-256. Полная приватность ваших идей.</p>
               </div>
             </div>
             <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 flex gap-6 items-start">
-              <div className="p-4 bg-blue-600/10 rounded-2xl text-blue-500"><Globe size={32}/></div>
+              <div className="p-4 bg-white/10 rounded-2xl text-white"><Globe size={32}/></div>
               <div>
                 <h4 className="text-xl font-bold mb-2">Remote Ready</h4>
                 <p className="text-sm text-slate-500">Работайте из любой точки мира. Оффлайн режим с последующей синхронизацией.</p>
@@ -241,8 +241,8 @@ const Main = () => {
         <div className="flex flex-col items-center">
           <h2 className="text-6xl md:text-9xl font-black mb-12 tracking-tighter italic uppercase">Finish Line.</h2>
           <div className="relative group w-full max-w-md">
-            <div className="absolute inset-0 bg-blue-600 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-            <button className="relative w-full bg-blue-600 py-6 rounded-2xl font-black text-xl hover:scale-105 transition-all">
+            <div className="absolute inset-0 bg-white blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+            <button className="relative w-full bg-white text-black py-6 rounded-2xl font-black text-xl hover:scale-105 transition-all">
               GET STARTED
             </button>
           </div>

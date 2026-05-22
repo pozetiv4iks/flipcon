@@ -17,7 +17,7 @@ const baseClassName =
 
 const variantClassName: Record<ButtonVariant, string> = {
   default:
-    "bg-white text-[#040035] hover:brightness-105 active:scale-[0.99]",
+    "bg-white text-black hover:brightness-105 active:scale-[0.99]",
   transparent:
     "border border-white/40 bg-transparent text-white hover:border-white/60 hover:bg-white/5 active:scale-[0.99]",
 };

@@ -9,7 +9,7 @@ import { Input } from "@/src/components/inputs/Input";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
 
 const pageBgClass =
-  "flex min-h-[100dvh] w-full flex-col bg-[#040035] bg-[radial-gradient(ellipse_120%_80%_at_50%_20%,#040035_0%,#000000_75%)] text-white";
+  "flex min-h-[100dvh] w-full flex-col text-white";
 
 const inputBaseClass =
   "w-full rounded-xl border border-white/25 bg-transparent px-4 py-3.5 text-[15px] text-white outline-none transition-[border-color,box-shadow] placeholder:text-white/35 focus:border-white/55 focus:ring-2 focus:ring-white/15";

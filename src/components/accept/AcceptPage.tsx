@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/src/components/buttons/Buttons";
 import { Input } from "@/src/components/inputs/Input";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
@@ -17,6 +17,7 @@ const inputClass =
 
 export default function AcceptPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [code, setCode] = useState("");
   const [showCodeInput, setShowCodeInput] = useState(false);
   const email = searchParams.get("email") ?? "samele.mobbin@gmail.com";
@@ -52,7 +53,7 @@ export default function AcceptPage() {
               wrapperClassName="w-full"
               inputClassName={inputClass}
             />
-            <Button type="submit" text="Продолжить" className="mt-3" />
+            <Button onClick={() => router.push('/create-workspace')} type="submit" text="Продолжить" className="mt-3" />
           </form>
         ) : (
           <button
