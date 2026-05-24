@@ -1,0 +1,120 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { 
+  Calendar, 
+  LayoutGrid, 
+  Bot, 
+  Settings, 
+  BarChart3,
+  Activity
+} from "lucide-react";
+import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
+
+const navItems = [
+  { icon: Calendar, label: "Календарь", href: "/calendar" },
+  { icon: LayoutGrid, label: "Таблица", href: "/table" },
+  { icon: Activity, label: "Доска активности", href: "/" },
+  { icon: Bot, label: "ИИ-помощник", href: "/ai-assistant" },
+];
+
+const bottomItems = [
+  { icon: Settings, label: "Настройки", href: "/settings" },
+  { icon: BarChart3, label: "Аналитика", href: "/analytics" },
+];
+
+export const Sidebar = () => {
+  const [isHovered, setIsHovered] = useState(false);
+  const pathname = usePathname();
+
+  return (
+    <aside
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`fixed left-0 top-0 z-[80] flex h-full flex-col bg-[#040035] transition-all duration-300 ease-in-out ${
+        isHovered ? "w-[336px]" : "w-[64px]"
+      } border-r border-white/5 rounded-r-[24px] overflow-hidden`}
+    >
+      <div className="flex h-20 items-center px-[12px] overflow-hidden">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-1 shadow-lg shadow-black/30">
+          <img
+            src="/images/logo.png"
+            alt="flipcon"
+            className="h-full w-full object-contain"
+          />
+        </div>
+        <img
+          src="/images/text-logo.png"
+          alt="flipcon"
+          className={`ml-2 h-[21px] transition-all duration-300 ${
+            isHovered ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+          }`}
+        />
+      </div>
+      <nav className="mt-8 flex-1 space-y-4 px-[14px]">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              onClick={(e) => {
+                if (isActive) e.preventDefault();
+              }}
+              className={`group flex h-9 items-center rounded-xl transition-colors ${
+                isActive ? "text-white bg-white/5" : "text-white/70 hover:text-white"
+              }`}
+            >
+              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                isActive ? "bg-white/10" : "group-hover:bg-white/5"
+              }`}>
+                <item.icon size={22} strokeWidth={1.5} />
+              </div>
+              <span
+                className={`ml-4 whitespace-nowrap text-[15px] font-medium transition-all duration-300 ${
+                  isHovered ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+                }`}
+              >
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Bottom Items */}
+      <div className="mb-8 space-y-4 px-[14px]">
+        {bottomItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              onClick={(e) => {
+                if (isActive) e.preventDefault();
+              }}
+              className={`group flex h-9 items-center rounded-xl transition-colors ${
+                isActive ? "text-white bg-white/5" : "text-white/70 hover:text-white"
+              }`}
+            >
+              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                isActive ? "bg-white/10" : "group-hover:bg-white/5"
+              }`}>
+                <item.icon size={22} strokeWidth={1.5} />
+              </div>
+              <span
+                className={`ml-4 whitespace-nowrap text-[15px] font-medium transition-all duration-300 ${
+                  isHovered ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+                }`}
+              >
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </aside>
+  );
+};

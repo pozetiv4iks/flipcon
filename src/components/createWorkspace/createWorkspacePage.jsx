@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/src/components/buttons/Buttons";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
+import { LoadingScreen } from "@/src/components/loading/LoadingScreen";
 
 const pageBgClass =
   "flex h-[100dvh] w-full flex-col overflow-hidden text-white";
@@ -14,20 +15,31 @@ const cardClass = "mx-auto flex w-full max-w-[400px] flex-col items-center";
 const inputWrapperClass = "w-full space-y-1.5";
 const labelClass = "text-[12px] font-medium text-white/70 ml-1";
 const inputBaseClass =
-  "h-10 w-full rounded-xl border border-white/15 bg-white/5 px-4 text-[13px] text-white outline-none transition-all placeholder:text-white/25 focus:border-white/30 focus:ring-2 focus:ring-white/5";
+  "h-10 w-full rounded-xl border border-white bg-white/5 px-4 text-[13px] text-white outline-none transition-all placeholder:text-white/50 focus:border-white/30 focus:ring-2 focus:ring-white/5";
 
 const selectWrapperClass = "relative w-full";
 const selectButtonClass =
-  "flex h-10 w-full items-center justify-between rounded-xl border border-white/15 bg-white/5 px-4 text-[13px] text-white/50 outline-none transition-all hover:bg-white/10";
+  "flex h-10 w-full items-center justify-between rounded-xl border border-white bg-white/5 px-4 text-[13px] text-white/50 outline-none transition-all hover:bg-white/10";
 
 export default function CreateWorkspacePage() {
   const router = useRouter();
+  const [isCreating, setIsCreating] = useState(false);
   const [workspaceName, setWorkspaceName] = useState("");
   const [workspaceUrl, setWorkspaceUrl] = useState("");
   const [teamSize, setTeamSize] = useState("");
   const [role, setRole] = useState("");
   
   const [openDropdown, setOpenDropdown] = useState(null); // 'teamSize' | 'role' | null
+
+  useEffect(() => {
+    if (!isCreating) return;
+    
+    const timer = setTimeout(() => {
+      router.push("/onboarding");
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, [isCreating, router]);
 
   const toggleDropdown = (name) => {
     setOpenDropdown(openDropdown === name ? null : name);
@@ -55,11 +67,19 @@ export default function CreateWorkspacePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsCreating(true);
     console.log({ workspaceName, workspaceUrl, teamSize, role });
+    // Infinite loading as requested
   };
 
   return (
     <div className={pageBgClass}>
+      {isCreating && (
+        <LoadingScreen 
+          text="Создаём ваш воркспейс" 
+          showLogo={true} 
+        />
+      )}
       {/* Header */}
       <header className="flex w-full items-center justify-between px-8 py-4">
         <button
@@ -87,7 +107,7 @@ export default function CreateWorkspacePage() {
             команда будет работать над проектами и задачами.
           </p>
 
-          <div className="mt-6 w-full rounded-[20px] border border-white/10 bg-white/[0.02] p-6 backdrop-blur-sm">
+          <div className="mt-6 w-full rounded-[20px] border border-white bg-white/[0.02] p-6 backdrop-blur-sm">
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Workspace Name */}
               <div className={inputWrapperClass}>
