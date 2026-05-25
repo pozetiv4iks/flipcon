@@ -22,7 +22,6 @@ import {
   History,
   X
 } from "lucide-react";
-import { Sidebar } from "@/src/components/sidebar/Sidebar";
 
 // --- Types ---
 interface Message {
@@ -96,10 +95,8 @@ export const AIAssistantPage = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#040035] bg-[radial-gradient(ellipse_120%_80%_at_50%_20%,#040035_0%,#000000_75%)] text-white overflow-hidden font-sans">
-      <Sidebar />
-      
-      <div className="flex flex-1 ml-[64px] transition-all duration-300 h-full relative">
+    <div className="flex h-screen text-white overflow-hidden font-sans">
+      <div className="flex flex-1 transition-all duration-300 h-full relative">
         
         {/* Main Chat Area */}
         <main className="flex-1 flex flex-col relative overflow-hidden">
@@ -246,7 +243,7 @@ export const AIAssistantPage = () => {
                 </div>
 
                 {/* Bottom Input Area for Active Chat */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#040035] via-[#040035]/90 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[var(--background)] via-[var(--background)]/90 to-transparent">
                   <div className="max-w-3xl mx-auto relative">
                     <div className="bg-[#1A1A1A]/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-3 shadow-2xl flex items-end gap-3">
                       <textarea 

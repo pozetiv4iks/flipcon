@@ -13,7 +13,6 @@ import {
   MoreHorizontal,
   Settings2
 } from "lucide-react";
-import { Sidebar } from "@/src/components/sidebar/Sidebar";
 
 // --- Types ---
 type EventType = "push-up" | "news" | "event";
@@ -90,9 +89,19 @@ const eventBorderColors: Record<EventType, string> = {
 };
 
 export const CalendarPage = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [mounted, setMounted] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 4, 25)); // Fixed date for SSR
+  const [selectedDate, setSelectedDate] = useState(new Date(2026, 4, 25));
+  const [today, setToday] = useState(new Date(2026, 4, 25));
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const now = new Date();
+    setCurrentDate(now);
+    setSelectedDate(now);
+    setToday(now);
+    setMounted(true);
+  }, []);
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thr", "Fri", "Sat", "Sun"];
   const months = [
@@ -128,7 +137,7 @@ export const CalendarPage = () => {
   const dayEvents = mockEvents.filter(e => e.date === selectedDateStr);
 
   return (
-    <div className="flex h-screen bg-[#040035] bg-[radial-gradient(ellipse_120%_80%_at_50%_20%,#040035_0%,#000000_75%)] text-white overflow-hidden">
+    <div className="flex h-screen text-white overflow-hidden">
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 4px;
@@ -144,79 +153,89 @@ export const CalendarPage = () => {
           background: rgba(255, 255, 255, 0.2);
         }
       `}</style>
-      <Sidebar />
       
-      <div className={`flex flex-1 ml-[64px] transition-all duration-300`}>
+      <div className={`flex flex-1 transition-all duration-300`}>
         
         {/* Middle Sidebar (Day Details) */}
         <aside className={`w-[360px] flex flex-col border-r border-white/5 bg-black/20 backdrop-blur-xl transition-all duration-300 overflow-y-auto custom-scrollbar ${isSidebarOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0 absolute'}`}>
-          <div className="p-8">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-[24px] font-bold">
-                {selectedDate.toLocaleDateString('en-US', { weekday: 'long' })}, 
-                <span className="text-white/40 ml-2">{selectedDate.getDate()}th</span>
-              </h2>
-              <button 
-                onClick={() => setIsSidebarOpen(false)}
-                className="h-8 w-8 rounded-full flex items-center justify-center text-white/30 hover:text-white hover:bg-white/5 transition-all"
-              >
-                <X size={20} />
-              </button>
-            </div>
+          {mounted ? (
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-[24px] font-bold">
+                  {selectedDate.toLocaleDateString('en-US', { weekday: 'long' })}, 
+                  <span className="text-white/40 ml-2">{selectedDate.getDate()}th</span>
+                </h2>
+                <button 
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="h-8 w-8 rounded-full flex items-center justify-center text-white/30 hover:text-white hover:bg-white/5 transition-all"
+                >
+                  <X size={20} />
+                </button>
+              </div>
 
-            <div className="flex flex-col gap-4">
-              {daysOfWeek.map((day, idx) => {
-                const d = new Date(selectedDate);
-                const currentDay = d.getDay() === 0 ? 6 : d.getDay() - 1;
-                const diff = idx - currentDay;
-                const dateAtIdx = new Date(selectedDate);
-                dateAtIdx.setDate(selectedDate.getDate() + diff);
-                const isSelected = dateAtIdx.getDate() === selectedDate.getDate();
+              <div className="flex flex-col gap-4">
+                {daysOfWeek.map((day, idx) => {
+                  const d = new Date(selectedDate);
+                  const currentDay = d.getDay() === 0 ? 6 : d.getDay() - 1;
+                  const diff = idx - currentDay;
+                  const dateAtIdx = new Date(selectedDate);
+                  dateAtIdx.setDate(selectedDate.getDate() + diff);
+                  const isSelected = dateAtIdx.getDate() === selectedDate.getDate();
 
-                return (
-                  <div key={day} className="flex items-center gap-6">
-                    <span className={`text-[13px] w-8 ${isSelected ? 'text-white font-bold' : 'text-white/30'}`}>{day}</span>
-                    <div className="flex-1">
-                      {isSelected ? (
-                        <div className="space-y-3">
-                          {dayEvents.length > 0 ? dayEvents.map(event => (
-                            <div key={event.id} className={`p-4 rounded-2xl ${eventColors[event.type]} relative group`}>
-                              <button className="absolute top-3 right-3 opacity-0 group-hover:opacity-40 hover:opacity-100 transition-opacity">
-                                <X size={14} />
-                              </button>
-                              <p className="text-[14px] font-bold mb-1">{event.title}</p>
-                              <div className="flex items-center gap-2 text-[11px] opacity-70">
-                                <Clock size={12} />
-                                <span>{event.startTime} {event.endTime ? `- ${event.endTime}` : ''}</span>
-                              </div>
-                              {event.participants && (
-                                <div className="mt-3 flex items-center gap-2">
-                                  <p className="text-[11px] font-medium opacity-60">Participants</p>
-                                  <div className="flex -space-x-2">
-                                    {[1, 2, 3].map(i => (
-                                      <div key={i} className="h-6 w-6 rounded-full border-2 border-white/20 bg-black/20 flex items-center justify-center text-[10px]">
-                                        +
-                                      </div>
-                                    ))}
-                                  </div>
+                  return (
+                    <div key={day} className="flex items-center gap-6">
+                      <span className={`text-[13px] w-8 ${isSelected ? 'text-white font-bold' : 'text-white/30'}`}>{day}</span>
+                      <div className="flex-1">
+                        {isSelected ? (
+                          <div className="space-y-3">
+                            {dayEvents.length > 0 ? dayEvents.map(event => (
+                              <div key={event.id} className={`p-4 rounded-2xl ${eventColors[event.type]} relative group`}>
+                                <button className="absolute top-3 right-3 opacity-0 group-hover:opacity-40 hover:opacity-100 transition-opacity">
+                                  <X size={14} />
+                                </button>
+                                <p className="text-[14px] font-bold mb-1">{event.title}</p>
+                                <div className="flex items-center gap-2 text-[11px] opacity-70">
+                                  <Clock size={12} />
+                                  <span>{event.startTime} {event.endTime ? `- ${event.endTime}` : ''}</span>
                                 </div>
-                              )}
-                            </div>
-                          )) : (
-                            <div className="h-20 flex items-center justify-center border border-dashed border-white/10 rounded-2xl text-white/20 text-[13px]">
-                              No events
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="h-px w-full bg-white/5" />
-                      )}
+                                {event.participants && (
+                                  <div className="mt-3 flex items-center gap-2">
+                                    <p className="text-[11px] font-medium opacity-60">Participants</p>
+                                    <div className="flex -space-x-2">
+                                      {[1, 2, 3].map(i => (
+                                        <div key={i} className="h-6 w-6 rounded-full border-2 border-white/20 bg-black/20 flex items-center justify-center text-[10px]">
+                                          +
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )) : (
+                              <div className="h-20 flex items-center justify-center border border-dashed border-white/10 rounded-2xl text-white/20 text-[13px]">
+                                No events
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="h-px w-full bg-white/5" />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="p-8 animate-pulse space-y-8">
+              <div className="h-8 w-48 bg-white/5 rounded-lg" />
+              <div className="space-y-4">
+                {[1, 2, 3, 4, 5, 6, 7].map(i => (
+                  <div key={i} className="h-12 w-full bg-white/5 rounded-xl" />
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Create Event Form */}
           <div className="mt-auto bg-black/40 p-8 border-t border-white/5">
@@ -279,8 +298,8 @@ export const CalendarPage = () => {
               <button onClick={prevMonth} className="text-white/30 hover:text-white transition-colors">
                 <ChevronLeft size={20} />
               </button>
-              <h3 className="text-[14px] font-black tracking-widest">
-                {months[currentDate.getMonth()]} <span className="text-white/30 ml-1">{currentDate.getFullYear()}</span>
+              <h3 className="text-[14px] font-black tracking-widest uppercase">
+                {mounted ? months[currentDate.getMonth()] : '...'} <span className="text-white/30 ml-1">{mounted ? currentDate.getFullYear() : '....'}</span>
               </h3>
               <button onClick={nextMonth} className="text-white/30 hover:text-white transition-colors">
                 <ChevronRight size={20} />
@@ -288,10 +307,10 @@ export const CalendarPage = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <button className="h-10 w-10 rounded-xl border border-white/5 flex items-center justify-center text-white/30 hover:text-white transition-colors">
+              <button className="h-10 w-10 rounded-xl border border-white/5 flex items-center justify-center text-white/40 hover:text-white transition-all">
                 <Settings2 size={18} />
               </button>
-              <button className="h-10 w-10 rounded-xl border border-white/5 flex items-center justify-center text-white/30 hover:text-white transition-colors">
+              <button className="h-10 w-10 rounded-xl border border-white/5 flex items-center justify-center text-white/40 hover:text-white transition-all">
                 <CalendarIcon size={18} />
               </button>
             </div>
@@ -307,64 +326,73 @@ export const CalendarPage = () => {
 
             {/* Calendar Cells */}
             <div className="col-span-7 grid grid-cols-7 h-full">
-              {/* Empty cells for previous month */}
-              {Array.from({ length: firstDay }).map((_, i) => (
-                <div key={`empty-${i}`} className="border-r border-b border-white/5 p-4 text-white/10 text-[13px] font-bold">
-                  {/* Could show prev month dates here */}
-                </div>
-              ))}
-
-              {/* Current month days */}
-              {Array.from({ length: daysInMonth }).map((_, i) => {
-                const day = i + 1;
-                const dateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-                const dateStr = formatDate(dateObj);
-                const isSelected = selectedDate.getDate() === day && selectedDate.getMonth() === currentDate.getMonth();
-                const isToday = day === new Date().getDate() && currentDate.getMonth() === new Date().getMonth() && currentDate.getFullYear() === new Date().getFullYear();
-                const events = mockEvents.filter(e => e.date === dateStr);
-
-                return (
-                  <div 
-                    key={day} 
-                    onClick={() => {
-                      const isSameDay = selectedDate.getDate() === day && selectedDate.getMonth() === currentDate.getMonth();
-                      if (isSameDay && isSidebarOpen) {
-                        setIsSidebarOpen(false);
-                      } else {
-                        setSelectedDate(dateObj);
-                        setIsSidebarOpen(true);
-                      }
-                    }}
-                    className={`border-r border-b border-white/5 p-3 flex flex-col gap-2 cursor-pointer transition-colors hover:bg-white/[0.02] ${isSelected && isSidebarOpen ? 'bg-white/[0.03]' : ''}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className={`text-[13px] font-bold h-7 w-7 rounded-full flex items-center justify-center transition-all ${
-                        isSelected 
-                          ? (isSidebarOpen ? 'bg-white text-black' : 'border border-white text-white')
-                          : (isToday ? 'border border-white/40 text-white' : 'text-white/30')
-                      }`}>
-                        {day}
-                      </span>
-                      {events.length > 3 && (
-                        <div className="h-5 w-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold">
-                          +{events.length - 3}
-                        </div>
-                      )}
+              {mounted ? (
+                <>
+                  {/* Empty cells for previous month */}
+                  {Array.from({ length: firstDay }).map((_, i) => (
+                    <div key={`empty-${i}`} className="border-r border-b border-white/5 p-4 text-white/10 text-[13px] font-bold">
                     </div>
-                    
-                    <div className="flex flex-col gap-1.5 overflow-hidden">
-                      {events.slice(0, 3).map(event => (
-                        <div 
-                          key={event.id} 
-                          className={`px-2 py-1.5 rounded-lg border-l-4 ${eventColors[event.type]} ${eventBorderColors[event.type]} text-[10px] font-bold truncate`}
-                        >
-                          {event.title}
+                  ))}
+
+                  {/* Current month days */}
+                  {Array.from({ length: daysInMonth }).map((_, i) => {
+                    const day = i + 1;
+                    const dateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+                    const dateStr = formatDate(dateObj);
+                    const isSelected = selectedDate.getDate() === day && selectedDate.getMonth() === currentDate.getMonth();
+                    const isToday = day === today.getDate() && currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear();
+                    const events = mockEvents.filter(e => e.date === dateStr);
+
+                    return (
+                      <div 
+                        key={day} 
+                        onClick={() => {
+                          const isSameDay = selectedDate.getDate() === day && selectedDate.getMonth() === currentDate.getMonth();
+                          if (isSameDay && isSidebarOpen) {
+                            setIsSidebarOpen(false);
+                          } else {
+                            setSelectedDate(dateObj);
+                            setIsSidebarOpen(true);
+                          }
+                        }}
+                        className={`border-r border-b border-white/5 p-3 flex flex-col gap-2 cursor-pointer transition-colors hover:bg-white/[0.02] ${isSelected && isSidebarOpen ? 'bg-white/[0.03]' : ''}`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className={`text-[13px] font-bold h-7 w-7 rounded-full flex items-center justify-center transition-all ${
+                            isSelected 
+                              ? (isSidebarOpen ? 'bg-white text-black' : 'border border-white text-white')
+                              : (isToday ? 'border border-white/40 text-white' : 'text-white/30')
+                          }`}>
+                            {day}
+                          </span>
+                          {events.length > 3 && (
+                            <div className="h-5 w-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold">
+                              +{events.length - 3}
+                            </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
+                        
+                        <div className="flex flex-col gap-1.5 overflow-hidden">
+                          {events.slice(0, 3).map(event => (
+                            <div 
+                              key={event.id} 
+                              className={`px-2 py-1.5 rounded-lg border-l-4 ${eventColors[event.type]} ${eventBorderColors[event.type]} text-[10px] font-bold truncate`}
+                            >
+                              {event.title}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </>
+              ) : (
+                Array.from({ length: 35 }).map((_, i) => (
+                  <div key={i} className="border-r border-b border-white/5 p-4 animate-pulse">
+                    <div className="h-6 w-6 bg-white/5 rounded-full" />
                   </div>
-                );
-              })}
+                ))
+              )}
             </div>
           </div>
         </main>

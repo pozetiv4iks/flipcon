@@ -1,5 +1,5 @@
-import AcceptPage from "@/src/components/accept/AcceptPage";
+import { SettingsPage } from "@/src/components/settings/SettingsPage";
 
 export default function Page() {
-  return <AcceptPage />;
+  return <SettingsPage />;
 }

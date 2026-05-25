@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Sidebar } from "@/src/components/sidebar/Sidebar";
 import { 
   CheckCircle2, 
   Clock, 
@@ -112,26 +111,27 @@ const TasksWidget = () => {
 
 const CalendarWidget = () => {
   const [mounted, setMounted] = React.useState(false);
-  const now = new Date();
+  const [today, setToday] = React.useState<Date | null>(null);
   
   React.useEffect(() => {
+    setToday(new Date());
     setMounted(true);
   }, []);
 
-  if (!mounted) {
+  if (!mounted || !today) {
     return <div className="rounded-[24px] border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm min-h-[300px] animate-pulse" />;
   }
 
-  const dayName = now.toLocaleDateString('ru-RU', { weekday: 'long' });
-  const dayNum = now.getDate();
-  const monthName = now.toLocaleDateString('ru-RU', { month: 'long' });
+  const dayName = today.toLocaleDateString('ru-RU', { weekday: 'long' });
+  const dayNum = today.getDate();
+  const monthName = today.toLocaleDateString('ru-RU', { month: 'long' });
 
   // Получаем количество дней в текущем месяце
-  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   
   // Получаем первый день месяца (0 - воскресенье, 1 - понедельник и т.д.)
   // Преобразуем к формату Пн=0, ..., Вс=6
-  let firstDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
+  let firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
   firstDay = firstDay === 0 ? 6 : firstDay - 1;
 
   return (
@@ -174,10 +174,8 @@ const CalendarWidget = () => {
 
 export const Dashboard = () => {
   return (
-    <div className="flex min-h-screen bg-[#040035] bg-[radial-gradient(ellipse_120%_80%_at_50%_20%,#040035_0%,#000000_75%)] text-white">
-      <Sidebar />
-      
-      <main className="ml-[64px] flex-1 p-10 transition-all duration-300">
+    <div className="flex min-h-screen text-white">
+      <main className="flex-1 p-10 transition-all duration-300">
         <div className="mx-auto max-w-7xl">
           <header className="mb-10">
             <h1 className="text-3xl font-bold">Добрый день, Степан</h1>

@@ -33,7 +33,7 @@ export const Sidebar = () => {
     <aside
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`fixed left-0 top-0 z-[80] flex h-full flex-col bg-[#040035] transition-all duration-300 ease-in-out ${
+      className={`fixed left-0 top-0 z-[80] flex h-full flex-col bg-[var(--sidebar-background)] transition-all duration-300 ease-in-out ${
         isHovered ? "w-[336px]" : "w-[64px]"
       } border-r border-white/5 rounded-r-[24px] overflow-hidden`}
     >

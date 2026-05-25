@@ -3,6 +3,7 @@
 :root {
   --background: #040035;
   --foreground: #ffffff;
+  --sidebar-background: #040035;
   --background-gradient:
     radial-gradient(
       ellipse 120% 80% at 50% 20%,
@@ -14,6 +15,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-sidebar: var(--sidebar-background);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
