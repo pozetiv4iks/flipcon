@@ -2,57 +2,59 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/src/i18n/LanguageContext";
 import { Mail, Copy } from "lucide-react";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
 import { Button } from "@/src/components/buttons/Buttons";
 
-const onboardingSteps = [
-  {
-    title: "Добро пожаловать в Flipcon",
-    description: "Умная система управления командами. ИИ проанализирует опыт участников и сам распределит задачи для максимальной эффективности.",
-    buttonText: "Начать работу",
-  },
-  {
-    title: "Автоматическое планирование",
-    description: "Забудьте о ручном создании диаграмм Ганта. Наш ИИ выстроит оптимальный путь реализации проекта за секунды.",
-    buttonText: "Продолжить",
-  },
-  {
-    title: "Умное распределение ресурсов",
-    description: "Система видит загрузку каждого участника и предлагает идеального исполнителя для каждой подзадачи.",
-    buttonText: "Продолжить",
-  },
-  {
-    title: "Анализ рисков в реальном времени",
-    description: "Flipcon предсказывает возможные задержки еще до того, как они произойдут, и предлагает пути решения.",
-    buttonText: "Продолжить",
-  },
-  {
-    title: "Интеграция со всеми инструментами",
-    description: "Синхронизируйте свои задачи с GitHub, Slack, Jira и другими сервисами в один клик.",
-    buttonText: "Продолжить",
-  },
-  {
-    title: "Командная синергия",
-    description: "Алгоритмы анализируют совместимость участников для создания максимально продуктивных рабочих групп.",
-    buttonText: "Продолжить",
-  },
-  {
-    title: "Готовы начать?",
-    description: "Присоединяйтесь к тысячам команд, которые уже изменили свой подход к управлению проектами с Flipcon.",
-    buttonText: "Продолжить",
-  },
-  {
-    title: "Пригласите участников в свою команду",
-    description: "Командная работа эффективнее. Пригласите коллег, чтобы ИИ мог проанализировать их опыт и распределить задачи.",
-    buttonText: "Продолжить",
-    isInviteStep: true,
-  },
-];
-
 export default function OnboardingPage() {
+  const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
+
+  const onboardingSteps = [
+    {
+      title: t.onboarding.welcome,
+      description: "Умная система управления командами. ИИ проанализирует опыт участников и сам распределит задачи для максимальной эффективности.",
+      buttonText: "Начать работу",
+    },
+    {
+      title: "Автоматическое планирование",
+      description: "Забудьте о ручном создании диаграмм Ганта. Наш ИИ выстроит оптимальный путь реализации проекта за секунды.",
+      buttonText: t.common.continue,
+    },
+    {
+      title: "Умное распределение ресурсов",
+      description: "Система видит загрузку каждого участника и предлагает идеального исполнителя для каждой подзадачи.",
+      buttonText: t.common.continue,
+    },
+    {
+      title: "Анализ рисков в реальном времени",
+      description: "Flipcon предсказывает возможные задержки еще до того, как они произойдут, и предлагает пути решения.",
+      buttonText: t.common.continue,
+    },
+    {
+      title: "Интеграция со всеми инструментами",
+      description: "Синхронизируйте свои задачи с GitHub, Slack, Jira и другими сервисами в один клик.",
+      buttonText: t.common.continue,
+    },
+    {
+      title: "Командная синергия",
+      description: "Алгоритмы анализируют совместимость участников для создания максимально продуктивных рабочих групп.",
+      buttonText: t.common.continue,
+    },
+    {
+      title: "Готовы начать?",
+      description: "Присоединяйтесь к тысячам команд, которые уже изменили свой подход к управлению проектами с Flipcon.",
+      buttonText: t.common.continue,
+    },
+    {
+      title: t.onboarding.invite,
+      description: t.onboarding.inviteDesc,
+      buttonText: t.common.continue,
+      isInviteStep: true,
+    },
+  ];
 
   const handleNext = () => {
     if (currentStep < onboardingSteps.length - 1) {
@@ -65,7 +67,7 @@ export default function OnboardingPage() {
   const step = onboardingSteps[currentStep];
 
   return (
-    <div className="flex h-[100dvh] w-full flex-col items-center justify-center bg-[#040035] bg-[radial-gradient(ellipse_120%_80%_at_50%_20%,#040035_0%,#000000_75%)] text-white">
+    <div className="flex h-[100dvh] w-full flex-col items-center justify-center bg-[var(--background)] bg-[var(--background-gradient)] bg-fixed bg-no-repeat text-white">
       <div className="mx-auto flex w-full max-w-[700px] flex-col items-center px-6 text-center">
         {!step.isInviteStep && (
           <div className="mb-10">
@@ -84,7 +86,7 @@ export default function OnboardingPage() {
         {step.isInviteStep ? (
           <div className="mb-12 w-full max-w-[540px] rounded-[20px] border border-white/10 bg-white/[0.02] p-8 text-left backdrop-blur-sm">
             <label className="mb-2 block text-[13px] font-medium text-white">
-              Ссылка-приглашение
+              {t.onboarding.inviteLink}
             </label>
             <p className="mb-4 text-[12px] text-white/50">
               Поделитесь этой ссылкой с другими участниками.
@@ -98,13 +100,13 @@ export default function OnboardingPage() {
               </div>
               <button className="flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-[14px] font-semibold text-black transition-transform active:scale-95">
                 <Copy className="h-4 w-4" />
-                Копировать
+                {t.onboarding.copy}
               </button>
             </div>
 
             <button className="mt-6 flex items-center gap-2 text-[13px] text-white/70 transition-colors hover:text-white">
               <Mail className="h-4 w-4" />
-              Пригласить по почте
+              {t.onboarding.mailInvite}
             </button>
           </div>
         ) : null}
@@ -115,7 +117,7 @@ export default function OnboardingPage() {
               onClick={handleNext}
               className="text-[14px] text-white/50 transition-colors hover:text-white"
             >
-              Продолжить
+              {t.common.continue}
             </button>
           ) : (
             <Button 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useLanguage } from "@/src/i18n/LanguageContext";
 import { Button } from "@/src/components/buttons/Buttons";
 import { Input } from "@/src/components/inputs/Input";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
@@ -16,6 +17,7 @@ const inputClass =
   "h-12 w-full rounded-xl border border-white/15 bg-black/10 px-4 text-[14px] text-white outline-none transition-[border-color,box-shadow] placeholder:text-white/28 focus:border-white/35 focus:ring-2 focus:ring-white/10";
 
 export default function AcceptPage() {
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [code, setCode] = useState("");
@@ -53,7 +55,7 @@ export default function AcceptPage() {
               wrapperClassName="w-full"
               inputClassName={inputClass}
             />
-            <Button onClick={() => router.push('/create-workspace')} type="submit" text="Продолжить" className="mt-3" />
+            <Button onClick={() => router.push('/create-workspace')} type="submit" text={t.common.continue} className="mt-3" />
           </form>
         ) : (
           <button
@@ -69,7 +71,7 @@ export default function AcceptPage() {
           href="/login"
           className="mt-4 text-center text-[12px] text-white/55 transition-colors hover:text-white"
         >
-          Назад к входу
+          {t.common.back} к входу
         </Link>
       </div>
     </div>

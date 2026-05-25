@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLanguage } from "@/src/i18n/LanguageContext";
 import { 
   Calendar, 
   LayoutGrid, 
@@ -13,21 +14,22 @@ import {
 } from "lucide-react";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
 
-const navItems = [
-  { icon: Calendar, label: "Календарь", href: "/calendar" },
-  { icon: LayoutGrid, label: "Таблица", href: "/table" },
-  { icon: Activity, label: "Доска активности", href: "/" },
-  { icon: Bot, label: "ИИ-помощник", href: "/ai-assistant" },
-];
-
-const bottomItems = [
-  { icon: Settings, label: "Настройки", href: "/settings" },
-  { icon: BarChart3, label: "Аналитика", href: "/analytics" },
-];
-
 export const Sidebar = () => {
+  const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const pathname = usePathname();
+
+  const navItems = [
+    { icon: Calendar, label: t.sidebar.calendar, href: "/calendar" },
+    { icon: LayoutGrid, label: t.sidebar.board, href: "/table" },
+    { icon: Activity, label: t.sidebar.dashboard, href: "/" },
+    { icon: Bot, label: t.sidebar.aiAssistant, href: "/ai-assistant" },
+  ];
+
+  const bottomItems = [
+    { icon: Settings, label: t.sidebar.settings, href: "/settings" },
+    { icon: BarChart3, label: "Аналитика", href: "/analytics" },
+  ];
 
   return (
     <aside

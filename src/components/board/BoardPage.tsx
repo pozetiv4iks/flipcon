@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useLanguage } from "@/src/i18n/LanguageContext";
 import { 
   Plus, 
   MoreHorizontal, 
@@ -34,44 +35,45 @@ interface Column {
   count?: number;
 }
 
-const initialCards: Card[] = [
-  { 
-    id: "1", 
-    title: "Допилить флипкон", 
-    tag: { text: "Новое", color: "text-green-500 border-green-500/30 bg-green-500/10" },
-    icon: <Sparkles size={14} className="text-blue-500" />,
-    columnId: "inbox",
-    description: "Нужно закончить основные страницы приложения и настроить навигацию."
-  },
-  { 
-    id: "2", 
-    title: "Мутить бабки", 
-    tag: { text: "Срочно", color: "text-red-500 border-red-500/30 bg-red-500/10" },
-    icon: <Sparkles size={14} className="text-blue-500" />,
-    columnId: "inbox",
-    description: "Разработать стратегию монетизации и найти первых клиентов."
-  },
-  { 
-    id: "3", 
-    title: "блаблабла", 
-    tag: { text: "Новое", color: "text-green-500 border-green-500/30 bg-green-500/10" },
-    icon: <Sparkles size={14} className="text-blue-500" />,
-    columnId: "inbox"
-  },
-  { 
-    id: "4", 
-    title: "Помыть пятки", 
-    columnId: "done" 
-  },
-];
-
 export const BoardPage = () => {
+  const { t } = useLanguage();
+  
+  const initialCards: Card[] = [
+    { 
+      id: "1", 
+      title: "Допилить флипкон", 
+      tag: { text: "Новое", color: "text-green-500 border-green-500/30 bg-green-500/10" },
+      icon: <Sparkles size={14} className="text-blue-500" />,
+      columnId: "todo",
+      description: "Нужно закончить основные страницы приложения и настроить навигацию."
+    },
+    { 
+      id: "2", 
+      title: "Мутить бабки", 
+      tag: { text: "Срочно", color: "text-red-500 border-red-500/30 bg-red-500/10" },
+      icon: <Sparkles size={14} className="text-blue-500" />,
+      columnId: "todo",
+      description: "Разработать стратегию монетизации и найти первых клиентов."
+    },
+    { 
+      id: "3", 
+      title: "блаблабла", 
+      tag: { text: "Новое", color: "text-green-500 border-green-500/30 bg-green-500/10" },
+      icon: <Sparkles size={14} className="text-blue-500" />,
+      columnId: "todo"
+    },
+    { 
+      id: "4", 
+      title: "Помыть пятки", 
+      columnId: "done" 
+    },
+  ];
+
   const [columns, setColumns] = useState<Column[]>([
-    { id: "inbox", title: "Inbox", count: 12 },
-    { id: "todo", title: "Не начато" },
-    { id: "progress", title: "В процессе" },
-    { id: "review", title: "На проверке" },
-    { id: "done", title: "Готово" },
+    { id: "todo", title: t.board.todo },
+    { id: "progress", title: t.board.inProgress },
+    { id: "review", title: t.board.review },
+    { id: "done", title: t.board.done },
   ]);
   const [cards, setCards] = useState<Card[]>(initialCards);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
@@ -155,14 +157,10 @@ export const BoardPage = () => {
               key={column.id} 
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, column.id)}
-              className={`w-[320px] flex flex-col max-h-full ${
-                column.id === 'inbox' ? 'border border-white/10 rounded-[32px] p-4 bg-black/20' : ''
-              }`}
+              className="w-[320px] flex flex-col max-h-full"
             >
               <div className="relative pt-4 pb-2 px-2 mb-4 group/col">
-                {column.id !== 'inbox' && (
-                  <div className="absolute top-0 left-0 right-0 h-px bg-white/20 rounded-full" />
-                )}
+                <div className="absolute top-0 left-0 right-0 h-px bg-white/20 rounded-full" />
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 flex-1">
                     <input 
@@ -171,9 +169,6 @@ export const BoardPage = () => {
                       onChange={(e) => handleUpdateColumnTitle(column.id, e.target.value)}
                       className="text-[18px] font-bold bg-transparent outline-none border-b border-transparent focus:border-white/10 w-full"
                     />
-                    {column.id === 'inbox' && column.count !== undefined && (
-                      <span className="text-[14px] text-white/20">{getCardsByColumn(column.id).length}</span>
-                    )}
                   </div>
                   <button 
                     onClick={() => handleDeleteColumn(column.id)}
@@ -195,7 +190,7 @@ export const BoardPage = () => {
                       if (e.key === 'Enter') handleAddCard(column.id);
                       if (e.key === 'Escape') setAddingToColumn(null);
                     }}
-                    placeholder="Название карточки..."
+                    placeholder={t.board.cardTitle}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-[14px] outline-none focus:border-white/20 mb-2"
                   />
                   <div className="flex items-center gap-2">
@@ -203,7 +198,7 @@ export const BoardPage = () => {
                       onClick={() => handleAddCard(column.id)}
                       className="bg-white text-black text-[12px] font-bold px-4 py-1.5 rounded-lg hover:bg-white/90 transition-all"
                     >
-                      Добавить
+                      {t.common.add}
                     </button>
                     <button 
                       onClick={() => setAddingToColumn(null)}
@@ -219,7 +214,7 @@ export const BoardPage = () => {
                   className="flex items-center gap-2 text-[14px] text-white/40 hover:text-white transition-all px-2 mb-6 group"
                 >
                   <Plus size={16} className="text-white/20 group-hover:text-white transition-all" />
-                  <span>Добавить карточку</span>
+                  <span>{t.board.addCard}</span>
                 </button>
               )}
 
@@ -255,7 +250,7 @@ export const BoardPage = () => {
                 
                 {getCardsByColumn(column.id).length === 0 && (
                   <div className="p-4 rounded-2xl border border-dashed border-white/5 bg-white/[0.01] flex items-center justify-center h-16">
-                    <p className="text-[13px] text-white/10">Перетащите сюда</p>
+                    <p className="text-[13px] text-white/10">{t.board.dropHere}</p>
                   </div>
                 )}
               </div>
@@ -275,7 +270,7 @@ export const BoardPage = () => {
                     if (e.key === 'Enter') handleAddColumn();
                     if (e.key === 'Escape') setIsAddingColumn(false);
                   }}
-                  placeholder="Название колонки..."
+                  placeholder={t.board.columnTitle}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-[14px] outline-none focus:border-white/20 mb-4"
                 />
                 <div className="flex items-center gap-2">
@@ -283,7 +278,7 @@ export const BoardPage = () => {
                     onClick={handleAddColumn}
                     className="bg-white text-black text-[12px] font-bold px-6 py-2 rounded-xl hover:bg-white/90 transition-all"
                   >
-                    Добавить колонку
+                    {t.board.addColumn}
                   </button>
                   <button 
                     onClick={() => setIsAddingColumn(false)}
@@ -299,7 +294,7 @@ export const BoardPage = () => {
                 className="w-full flex items-center justify-center gap-3 py-4 rounded-[32px] border border-dashed border-white/10 text-white/40 hover:text-white hover:bg-white/5 transition-all"
               >
                 <Plus size={20} />
-                <span className="font-bold">Добавить колонку</span>
+                <span className="font-bold">{t.board.addColumn}</span>
               </button>
             )}
           </div>
@@ -334,7 +329,7 @@ export const BoardPage = () => {
                   <button 
                     onClick={() => handleDeleteCard(selectedCard.id)}
                     className="h-10 w-10 rounded-full flex items-center justify-center text-white/20 hover:text-red-500 hover:bg-red-500/10 transition-all"
-                    title="Удалить карточку"
+                    title={t.common.delete}
                   >
                     <Trash2 size={20} />
                   </button>
@@ -350,7 +345,7 @@ export const BoardPage = () => {
               <div className="grid grid-cols-[1fr_200px] gap-12">
                 <div className="space-y-8">
                   <div>
-                    <h3 className="text-[12px] font-bold text-white/20 uppercase tracking-widest mb-4">Описание</h3>
+                    <h3 className="text-[12px] font-bold text-white/20 uppercase tracking-widest mb-4">{t.board.description}</h3>
                     <textarea 
                       value={selectedCard.description || ""}
                       onChange={(e) => handleUpdateCard(selectedCard.id, { description: e.target.value })}
@@ -360,14 +355,14 @@ export const BoardPage = () => {
                   </div>
 
                   <div>
-                    <h3 className="text-[12px] font-bold text-white/20 uppercase tracking-widest mb-4">Активность</h3>
+                    <h3 className="text-[12px] font-bold text-white/20 uppercase tracking-widest mb-4">{t.board.activity}</h3>
                     <div className="flex gap-4">
                       <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
                         <User size={16} className="text-white/40" />
                       </div>
                       <div className="flex-1">
                         <div className="bg-white/5 border border-white/5 rounded-xl p-3 text-[14px] text-white/40 hover:border-white/10 transition-all cursor-text">
-                          Напишите комментарий...
+                          {t.board.commentPlaceholder}
                         </div>
                       </div>
                     </div>
@@ -376,7 +371,7 @@ export const BoardPage = () => {
 
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-[12px] font-bold text-white/20 uppercase tracking-widest mb-3">Метки</h3>
+                    <h3 className="text-[12px] font-bold text-white/20 uppercase tracking-widest mb-3">{t.board.labels}</h3>
                     {selectedCard.tag ? (
                       <div className={`inline-flex px-3 py-1.5 rounded-lg border text-[12px] font-bold ${selectedCard.tag.color}`}>
                         {selectedCard.tag.text}
@@ -390,19 +385,19 @@ export const BoardPage = () => {
                   </div>
 
                   <div>
-                    <h3 className="text-[12px] font-bold text-white/20 uppercase tracking-widest mb-3">Действия</h3>
+                    <h3 className="text-[12px] font-bold text-white/20 uppercase tracking-widest mb-3">{t.board.actions}</h3>
                     <div className="space-y-2">
                       <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-[14px] text-left">
                         <User size={16} className="text-white/40" />
-                        <span>Участники</span>
+                        <span>{t.board.members}</span>
                       </button>
                       <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-[14px] text-left">
                         <Clock size={16} className="text-white/40" />
-                        <span>Даты</span>
+                        <span>{t.board.dates}</span>
                       </button>
                       <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-[14px] text-left">
                         <Paperclip size={16} className="text-white/40" />
-                        <span>Вложения</span>
+                        <span>{t.board.attachments}</span>
                       </button>
                     </div>
                   </div>
@@ -412,6 +407,7 @@ export const BoardPage = () => {
           </div>
         </div>
       )}
+
 
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {

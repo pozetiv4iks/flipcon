@@ -20,7 +20,7 @@ export default function DefaultLayout({
   const showSidebar = !noSidebarPages.includes(pathname);
   
   return (
-    <div className="flex min-h-screen bg-[var(--background)] bg-[var(--background-gradient)]">
+    <div className="flex min-h-screen bg-[var(--background)] bg-[var(--background-gradient)] bg-fixed bg-no-repeat">
       {showSidebar && <Sidebar />}
       <div className={`flex-1 transition-all duration-300 ${showSidebar ? 'ml-[64px]' : ''}`}>
         {children}

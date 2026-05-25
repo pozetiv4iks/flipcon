@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useLanguage } from "@/src/i18n/LanguageContext";
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -11,7 +12,8 @@ import {
   Calendar as CalendarIcon,
   Copy,
   MoreHorizontal,
-  Settings2
+  Settings2,
+  ChevronDown
 } from "lucide-react";
 
 // --- Types ---
@@ -89,11 +91,15 @@ const eventBorderColors: Record<EventType, string> = {
 };
 
 export const CalendarPage = () => {
+  const { language, t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date(2026, 4, 25)); // Fixed date for SSR
   const [selectedDate, setSelectedDate] = useState(new Date(2026, 4, 25));
   const [today, setToday] = useState(new Date(2026, 4, 25));
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [tempYear, setTempYear] = useState(2026);
+  const datePickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const now = new Date();
@@ -101,13 +107,19 @@ export const CalendarPage = () => {
     setSelectedDate(now);
     setToday(now);
     setMounted(true);
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
+        setIsDatePickerOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const daysOfWeek = ["Mon", "Tue", "Wed", "Thr", "Fri", "Sat", "Sun"];
-  const months = [
-    "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
-    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
-  ];
+  const daysOfWeek = t.calendar.weekdays;
+  const months = t.calendar.months;
 
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
@@ -162,7 +174,7 @@ export const CalendarPage = () => {
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-[24px] font-bold">
-                  {selectedDate.toLocaleDateString('en-US', { weekday: 'long' })}, 
+                  {selectedDate.toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US', { weekday: 'long' })}, 
                   <span className="text-white/40 ml-2">{selectedDate.getDate()}th</span>
                 </h2>
                 <button 
@@ -200,7 +212,7 @@ export const CalendarPage = () => {
                                 </div>
                                 {event.participants && (
                                   <div className="mt-3 flex items-center gap-2">
-                                    <p className="text-[11px] font-medium opacity-60">Participants</p>
+                                    <p className="text-[11px] font-medium opacity-60">{t.calendar.participants}</p>
                                     <div className="flex -space-x-2">
                                       {[1, 2, 3].map(i => (
                                         <div key={i} className="h-6 w-6 rounded-full border-2 border-white/20 bg-black/20 flex items-center justify-center text-[10px]">
@@ -213,7 +225,7 @@ export const CalendarPage = () => {
                               </div>
                             )) : (
                               <div className="h-20 flex items-center justify-center border border-dashed border-white/10 rounded-2xl text-white/20 text-[13px]">
-                                No events
+                                {t.calendar.noEvents}
                               </div>
                             )}
                           </div>
@@ -249,7 +261,7 @@ export const CalendarPage = () => {
             
             <div className="space-y-6">
               <div>
-                <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-2">Title</label>
+                <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-2">{t.calendar.eventTitle}</label>
                 <input 
                   type="text" 
                   placeholder="New Opening" 
@@ -258,7 +270,7 @@ export const CalendarPage = () => {
               </div>
               
               <div>
-                <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-2">Description</label>
+                <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-2">{t.calendar.description}</label>
                 <input 
                   type="text" 
                   className="w-full bg-transparent border-b border-white/10 py-2 text-[14px] outline-none focus:border-white transition-colors"
@@ -267,7 +279,7 @@ export const CalendarPage = () => {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-1">Set time</label>
+                  <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-1">{t.calendar.setTime}</label>
                   <p className="text-[13px]">15th August at 12:00</p>
                 </div>
                 <CalendarIcon size={16} className="text-white/30" />
@@ -285,22 +297,72 @@ export const CalendarPage = () => {
               </div>
 
               <button className="w-full bg-[#E8E4FF] text-[#3B3486] font-bold py-4 rounded-xl text-[14px] hover:brightness-105 active:scale-[0.98] transition-all">
-                Save Event
+                {t.calendar.saveEvent}
               </button>
             </div>
           </div>
         </aside>
 
+
         {/* Main Calendar Grid */}
         <main className="flex-1 flex flex-col">
-          <header className="h-20 flex items-center justify-between px-10 border-b border-white/5">
+          <header className="h-20 flex items-center justify-between px-10 border-b border-white/5 relative">
             <div className="flex items-center gap-6">
               <button onClick={prevMonth} className="text-white/30 hover:text-white transition-colors">
                 <ChevronLeft size={20} />
               </button>
-              <h3 className="text-[14px] font-black tracking-widest uppercase">
-                {mounted ? months[currentDate.getMonth()] : '...'} <span className="text-white/30 ml-1">{mounted ? currentDate.getFullYear() : '....'}</span>
-              </h3>
+              <div className="relative" ref={datePickerRef}>
+                <button 
+                  onClick={() => {
+                    setIsDatePickerOpen(!isDatePickerOpen);
+                    setTempYear(currentDate.getFullYear());
+                  }}
+                  className="flex items-center gap-2 text-[14px] font-black tracking-widest uppercase hover:text-white/80 transition-all"
+                >
+                  {mounted ? months[currentDate.getMonth()] : '...'} 
+                  <span className="text-white/30 ml-1">{mounted ? currentDate.getFullYear() : '....'}</span>
+                  <ChevronDown size={14} className={`text-white/20 transition-transform ${isDatePickerOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {isDatePickerOpen && (
+                  <div className="absolute top-full left-0 mt-4 z-50 w-[320px] bg-[#0D0D0D] border border-white/10 rounded-[24px] shadow-2xl p-6 animate-in fade-in zoom-in duration-200">
+                    <div className="flex items-center justify-between mb-6">
+                      <button 
+                        onClick={() => setTempYear(tempYear - 1)}
+                        className="p-2 text-white/30 hover:text-white transition-all"
+                      >
+                        <ChevronLeft size={18} />
+                      </button>
+                      <span className="text-[18px] font-bold">{tempYear}</span>
+                      <button 
+                        onClick={() => setTempYear(tempYear + 1)}
+                        className="p-2 text-white/30 hover:text-white transition-all"
+                      >
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      {months.map((month, idx) => (
+                        <button
+                          key={month}
+                          onClick={() => {
+                            setCurrentDate(new Date(tempYear, idx, 1));
+                            setIsDatePickerOpen(false);
+                          }}
+                          className={`py-2 rounded-xl text-[11px] font-bold transition-all ${
+                            currentDate.getMonth() === idx && currentDate.getFullYear() === tempYear
+                              ? 'bg-white text-black'
+                              : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white'
+                          }`}
+                        >
+                          {month.substring(0, 3)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
               <button onClick={nextMonth} className="text-white/30 hover:text-white transition-colors">
                 <ChevronRight size={20} />
               </button>

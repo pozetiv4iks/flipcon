@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/src/i18n/LanguageContext";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/src/components/buttons/Buttons";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
@@ -22,6 +23,7 @@ const selectButtonClass =
   "flex h-10 w-full items-center justify-between rounded-xl border border-white bg-white/5 px-4 text-[13px] text-white/50 outline-none transition-all hover:bg-white/10";
 
 export default function CreateWorkspacePage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
   const [workspaceName, setWorkspaceName] = useState("");
@@ -86,7 +88,7 @@ export default function CreateWorkspacePage() {
           onClick={() => router.push("/login")}
           className="text-[12px] text-white/50 transition-colors hover:text-white"
         >
-          Выйти
+          {t.common.back}
         </button>
         <div className="text-[12px] text-white/50">
           Вы вошли как: <span className="text-white">samlee.mobbin@gmail.com</span>

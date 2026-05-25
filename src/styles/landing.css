@@ -68,6 +68,8 @@ html:has(.landing-root) {
     #040035 58%,
     #010008 100%
   );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--landing-fg);
 }
 

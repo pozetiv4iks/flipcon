@@ -36,6 +36,8 @@
 body {
   background-color: var(--background);
   background-image: var(--background-gradient);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }

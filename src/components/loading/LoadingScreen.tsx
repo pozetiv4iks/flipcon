@@ -50,7 +50,7 @@ export const LoadingScreen = ({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#040035] bg-[radial-gradient(ellipse_120%_80%_at_50%_20%,#040035_0%,#000000_75%)]">
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[var(--background)] bg-[var(--background-gradient)] bg-fixed bg-no-repeat">
       {showLogo && (
         <div className="">
           <AuthPageLogo />
