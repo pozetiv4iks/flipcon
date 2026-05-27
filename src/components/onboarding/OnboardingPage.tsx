@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/src/i18n/LanguageContext";
-import { Mail, Copy } from "lucide-react";
+import { Mail, Copy, Check } from "lucide-react";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
 import { Button } from "@/src/components/buttons/Buttons";
+import { companiesApi } from "@/src/services/api/companies";
 
 export default function OnboardingPage() {
   const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
+  const [inviteUrl, setInviteUrl] = useState("");
+  const [copied, setCopied] = useState(false);
   const router = useRouter();
 
   const onboardingSteps = [
@@ -56,6 +59,28 @@ export default function OnboardingPage() {
     },
   ];
 
+  useEffect(() => {
+    if (currentStep === onboardingSteps.length - 1) {
+      generateInvite();
+    }
+  }, [currentStep]);
+
+  const generateInvite = async () => {
+    try {
+      const response = await companiesApi.generateInvite();
+      setInviteUrl(response.inviteUrl);
+    } catch (error) {
+      console.error("Failed to generate invite", error);
+    }
+  };
+
+  const handleCopy = () => {
+    if (!inviteUrl) return;
+    navigator.clipboard.writeText(inviteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const handleNext = () => {
     if (currentStep < onboardingSteps.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -95,12 +120,18 @@ export default function OnboardingPage() {
             <div className="flex items-center gap-2">
               <div className="flex h-11 flex-1 items-center overflow-hidden rounded-xl border border-white/15 bg-white/5 px-4">
                 <span className="truncate text-[13px] text-white/40">
-                  https://flipcon.app/zholydi/join/1234567a891011b12cde1f...
+                  {inviteUrl || "Генерация ссылки..."}
                 </span>
               </div>
-              <button className="flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-[14px] font-semibold text-black transition-transform active:scale-95">
-                <Copy className="h-4 w-4" />
-                {t.onboarding.copy}
+              <button 
+                onClick={handleCopy}
+                disabled={!inviteUrl}
+                className={`flex h-11 items-center gap-2 rounded-xl px-5 text-[14px] font-semibold transition-all active:scale-95 ${
+                  copied ? "bg-green-500 text-white" : "bg-white text-black hover:bg-white/90"
+                }`}
+              >
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied ? "Скопировано" : t.onboarding.copy}
               </button>
             </div>
 

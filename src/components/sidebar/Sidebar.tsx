@@ -13,6 +13,7 @@ import {
   Activity
 } from "lucide-react";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
+import { ProjectSwitcher } from "./ProjectSwitcher";
 
 export const Sidebar = () => {
   const { t } = useLanguage();
@@ -55,6 +56,9 @@ export const Sidebar = () => {
           }`}
         />
       </div>
+      
+      <ProjectSwitcher isHovered={isHovered} />
+
       <nav className="mt-8 flex-1 space-y-4 px-[14px]">
         {navItems.map((item) => {
           const isActive = pathname === item.href;

@@ -9,8 +9,13 @@ import {
   Bell, 
   Shield, 
   Globe,
-  Check
+  Check,
+  LogOut,
+  UserPlus,
+  Copy
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { companiesApi } from "@/src/services/api/companies";
 
 const customPalette = [
   "#040035", "#0A0A0A", "#1A1A1A", "#1E1E2E", "#0F172A", "#020617",
@@ -21,10 +26,42 @@ const customPalette = [
 
 export const SettingsPage = () => {
   const { language, setLanguage, t } = useLanguage();
+  const router = useRouter();
   const [activeColor, setActiveColor] = useState("#040035");
   const [activeSection, setActiveSection] = useState("appearance");
+  const [user, setUser] = useState<any>(null);
+  const [inviteUrl, setInviteUrl] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("selectedProject");
+    router.push("/login");
+  };
+
+  const handleGenerateInvite = async () => {
+    try {
+      const response = await companiesApi.generateInvite();
+      setInviteUrl(response.inviteUrl);
+    } catch (error) {
+      console.error("Failed to generate invite", error);
+    }
+  };
+
+  const handleCopy = () => {
+    if (!inviteUrl) return;
+    navigator.clipboard.writeText(inviteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    
     // Load saved color from localStorage
     const savedColor = localStorage.getItem("flipcon-theme-color");
     if (savedColor) {
@@ -67,6 +104,7 @@ export const SettingsPage = () => {
               {[
                 { id: "appearance", icon: Palette, label: t.settings.appearance },
                 { id: "profile", icon: User, label: t.settings.profile },
+                ...(user?.role === 'admin' ? [{ id: "team", icon: UserPlus, label: "Команда" }] : []),
                 { id: "notifications", icon: Bell, label: t.settings.notifications },
                 { id: "security", icon: Shield, label: t.settings.security },
                 { id: "language", icon: Globe, label: t.sidebar.calendar === "Календарь" ? "Язык" : "Language" }, // Fallback logic or just use t.settings.language
@@ -185,6 +223,67 @@ export const SettingsPage = () => {
                         <p className="text-[15px]">stepan@flipcon.app</p>
                       </div>
                       <button className="text-[13px] text-blue-400 hover:underline">{t.settings.change}</button>
+                    </div>
+                    
+                    <div className="pt-4 border-t border-white/5">
+                      <button 
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all text-[14px] font-medium"
+                      >
+                        <LogOut size={16} />
+                        Выйти из аккаунта
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              )}
+
+              {activeSection === "team" && user?.role === 'admin' && (
+                <section className="animate-in">
+                  <h3 className="text-[18px] font-bold mb-6 flex items-center gap-2">
+                    <UserPlus size={20} className="text-green-400" />
+                    Управление командой
+                  </h3>
+                  <div className="bg-white/[0.02] border border-white/5 rounded-[32px] p-8 space-y-6">
+                    <div>
+                      <h4 className="text-[15px] font-medium mb-2">Приглашение на проект</h4>
+                      <p className="text-white/40 text-[13px] mb-6">
+                        Сгенерируйте ссылку для приглашения новых участников в вашу компанию и проекты.
+                      </p>
+                      
+                      {!inviteUrl ? (
+                        <button 
+                          onClick={handleGenerateInvite}
+                          className="px-6 py-3 rounded-xl bg-white text-black text-[14px] font-semibold hover:bg-white/90 transition-all active:scale-95"
+                        >
+                          Создать ссылку-приглашение
+                        </button>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2">
+                            <div className="flex h-11 flex-1 items-center overflow-hidden rounded-xl border border-white/15 bg-white/5 px-4">
+                              <span className="truncate text-[13px] text-white/60">
+                                {inviteUrl}
+                              </span>
+                            </div>
+                            <button 
+                              onClick={handleCopy}
+                              className={`flex h-11 items-center gap-2 rounded-xl px-5 text-[14px] font-semibold transition-all active:scale-95 ${
+                                copied ? "bg-green-500 text-white" : "bg-white text-black hover:bg-white/90"
+                              }`}
+                            >
+                              {copied ? <Check size={16} /> : <Copy size={16} />}
+                              {copied ? "Скопировано" : "Копировать"}
+                            </button>
+                          </div>
+                          <button 
+                            onClick={() => setInviteUrl("")}
+                            className="text-[13px] text-white/40 hover:text-white transition-all underline underline-offset-4"
+                          >
+                            Сгенерировать новую ссылку
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </section>

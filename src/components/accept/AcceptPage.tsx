@@ -7,6 +7,7 @@ import { useLanguage } from "@/src/i18n/LanguageContext";
 import { Button } from "@/src/components/buttons/Buttons";
 import { Input } from "@/src/components/inputs/Input";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
+import { authApi } from "@/src/services/api/auth";
 
 const pageClass =
   "flex min-h-[100dvh] w-full items-center justify-center px-5 py-10 text-white";
@@ -20,13 +21,21 @@ export default function AcceptPage() {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [code, setCode] = useState("");
-  const [showCodeInput, setShowCodeInput] = useState(false);
-  const email = searchParams.get("email") ?? "samele.mobbin@gmail.com";
+  const [code, setCode] = useState(searchParams.get("code") || "");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(searchParams.get("email") || "");
+  const [showCodeInput, setShowCodeInput] = useState(!!searchParams.get("code"));
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ code });
+    try {
+      const response = await authApi.registerWorker({ email, password }, code);
+      localStorage.setItem('token', response.access_token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      router.push('/calendar'); // Or wherever workers go
+    } catch (error: any) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -45,7 +54,18 @@ export default function AcceptPage() {
         </p>
 
         {showCodeInput ? (
-          <form className="mt-6 w-full" onSubmit={handleSubmit} noValidate>
+          <form className="mt-6 w-full space-y-3" onSubmit={handleSubmit} noValidate>
+            {!searchParams.get("email") && (
+              <Input
+                name="email"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                wrapperClassName="w-full"
+                inputClassName={inputClass}
+              />
+            )}
             <Input
               name="code"
               type="text"
@@ -55,7 +75,16 @@ export default function AcceptPage() {
               wrapperClassName="w-full"
               inputClassName={inputClass}
             />
-            <Button onClick={() => router.push('/create-workspace')} type="submit" text={t.common.continue} className="mt-3" />
+            <Input
+              name="password"
+              type="password"
+              placeholder="Придумайте пароль"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              wrapperClassName="w-full"
+              inputClassName={inputClass}
+            />
+            <Button type="submit" text="Зарегистрироваться как работник" className="mt-3" />
           </form>
         ) : (
           <button

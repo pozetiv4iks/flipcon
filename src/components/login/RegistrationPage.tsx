@@ -8,6 +8,7 @@ import { GoogleIcon } from "@/src/components/assets/GoogleIcon";
 import { Button } from "@/src/components/buttons/Buttons";
 import { Input } from "@/src/components/inputs/Input";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
+import { authApi } from "@/src/services/api/auth";
 
 const pageBgClass =
   "flex min-h-[100dvh] w-full flex-col text-white";
@@ -37,10 +38,20 @@ export default function RegistrationPage() {
     setShowEmailFields(true);
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ email, password, passwordAgain });
-    
+    if (password !== passwordAgain) {
+      alert("Passwords do not match");
+      return;
+    }
+    try {
+      const response = await authApi.register({ email, password });
+      localStorage.setItem('token', response.access_token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      window.location.href = '/create-workspace';
+    } catch (error: any) {
+      alert(error.message);
+    }
   };
 
   return (
