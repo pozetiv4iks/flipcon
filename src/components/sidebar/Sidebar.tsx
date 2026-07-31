@@ -10,7 +10,10 @@ import {
   Bot, 
   Settings, 
   BarChart3,
-  Activity
+  Activity,
+  Users,
+  Zap,
+  Clock
 } from "lucide-react";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
 import { ProjectSwitcher } from "./ProjectSwitcher";
@@ -20,11 +23,18 @@ export const Sidebar = () => {
   const [isHovered, setIsHovered] = useState(false);
   const pathname = usePathname();
 
+  // In a real app, this would check permissions
+  const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null;
+  const isAdmin = user?.role === 'admin';
+
   const navItems = [
     { icon: Calendar, label: t.sidebar.calendar, href: "/calendar" },
     { icon: LayoutGrid, label: t.sidebar.board, href: "/table" },
     { icon: Activity, label: t.sidebar.dashboard, href: "/" },
     { icon: Bot, label: t.sidebar.aiAssistant, href: "/ai-assistant" },
+    { icon: Zap, label: "AI Аналитика", href: "/ai-insights" },
+    { icon: Clock, label: "Таймлоги", href: "/timelogs" },
+    ...(isAdmin ? [{ icon: Users, label: "Команда", href: "/team" }] : []),
   ];
 
   const bottomItems = [

@@ -9,8 +9,8 @@ export default function Home() {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAuthorized(!!token);
+    // For now, always authorized for easier UI work
+    setIsAuthorized(true);
   }, []);
 
   if (isAuthorized === null) return null; // Or a loading spinner

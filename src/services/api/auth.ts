@@ -15,4 +15,8 @@ export const authApi = {
     method: 'POST',
     body: JSON.stringify({ ...userData, inviteCode }),
   }),
+  
+  generateTestInvite: () => apiFetch('/auth/generate-test-invite', {
+    method: 'POST',
+  }),
 };

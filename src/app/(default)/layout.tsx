@@ -13,8 +13,8 @@ export default function DefaultLayout({
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAuthorized(!!token);
+    // For now, always authorized for easier UI work
+    setIsAuthorized(true);
   }, [pathname]);
 
   const noSidebarPages = [

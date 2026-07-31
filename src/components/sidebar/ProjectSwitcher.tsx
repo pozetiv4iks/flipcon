@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { ChevronDown, Folder } from "lucide-react";
-import { projectsApi } from "@/src/services/api/projects";
 
 interface Project {
   id: string;
@@ -16,20 +15,21 @@ export const ProjectSwitcher = ({ isHovered }: { isHovered: boolean }) => {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      try {
-        const data = await projectsApi.getMyProjects();
-        setProjects(data);
-        if (data.length > 0) {
-          const savedProject = localStorage.getItem('selectedProject');
-          if (savedProject) {
-            setSelectedProject(JSON.parse(savedProject));
-          } else {
-            setSelectedProject(data[0]);
-            localStorage.setItem('selectedProject', JSON.stringify(data[0]));
-          }
+      // Simulation of success without backend
+      const data = [
+        { id: '1', name: 'Проект Альфа' },
+        { id: '2', name: 'Проект Бета' },
+        { id: '3', name: 'Flipcon AI' }
+      ];
+      setProjects(data);
+      if (data.length > 0) {
+        const savedProject = localStorage.getItem('selectedProject');
+        if (savedProject) {
+          setSelectedProject(JSON.parse(savedProject));
+        } else {
+          setSelectedProject(data[0]);
+          localStorage.setItem('selectedProject', JSON.stringify(data[0]));
         }
-      } catch (error) {
-        console.error("Failed to fetch projects", error);
       }
     };
     fetchProjects();

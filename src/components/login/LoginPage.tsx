@@ -9,6 +9,7 @@ import { Button } from "@/src/components/buttons/Buttons";
 import { Input } from "@/src/components/inputs/Input";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/src/components/notifications/ToastContext";
 
 const pageBgClass =
   "flex min-h-[100dvh] w-full flex-col text-white";
@@ -18,6 +19,7 @@ const inputBaseClass =
 
 export default function LoginPage() {
   const { t } = useLanguage();
+  const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showEmailFields, setShowEmailFields] = useState(false);
@@ -37,10 +39,12 @@ export default function LoginPage() {
     setShowEmailFields(true);
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ email, password });
-    router.push("/accept");
+    // Simulation of success without backend
+    localStorage.setItem('token', 'mock-token');
+    localStorage.setItem('user', JSON.stringify({ email, role: 'admin' }));
+    window.location.href = '/';
   };
 
   return (

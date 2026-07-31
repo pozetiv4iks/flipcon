@@ -3,9 +3,10 @@ import { type ButtonHTMLAttributes, type ReactNode } from "react";
 type ButtonVariant = "default" | "transparent";
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  text: string;
+  text?: string;
   logo?: ReactNode;
   variant?: ButtonVariant;
+  children?: ReactNode;
 };
 
 function joinClasses(...parts: Array<string | undefined | false>) {
@@ -28,6 +29,7 @@ export function Button({
   variant = "default",
   className,
   type = "button",
+  children,
   ...props
 }: ButtonProps) {
   return (
@@ -41,7 +43,7 @@ export function Button({
       {...props}
     >
       {logo ? <span className="flex h-5 w-5 shrink-0 items-center justify-center">{logo}</span> : null}
-      <span>{text}</span>
+      {text ? <span>{text}</span> : children}
     </button>
   );
 }

@@ -7,7 +7,7 @@ import { useLanguage } from "@/src/i18n/LanguageContext";
 import { Button } from "@/src/components/buttons/Buttons";
 import { Input } from "@/src/components/inputs/Input";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
-import { authApi } from "@/src/services/api/auth";
+import { useToast } from "@/src/components/notifications/ToastContext";
 
 const pageClass =
   "flex min-h-[100dvh] w-full items-center justify-center px-5 py-10 text-white";
@@ -19,23 +19,27 @@ const inputClass =
 
 export default function AcceptPage() {
   const { t } = useLanguage();
+  const { showToast } = useToast();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [code, setCode] = useState(searchParams.get("code") || "");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState(searchParams.get("email") || "");
   const [showCodeInput, setShowCodeInput] = useState(!!searchParams.get("code"));
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleManualCode = async () => {
+    // Simulation of success without backend
+    setCode("123456");
+    setShowCodeInput(true);
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const response = await authApi.registerWorker({ email, password }, code);
-      localStorage.setItem('token', response.access_token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      router.push('/calendar'); // Or wherever workers go
-    } catch (error: any) {
-      alert(error.message);
-    }
+    // Simulation of success without backend
+    localStorage.setItem('token', 'mock-token');
+    localStorage.setItem('user', JSON.stringify({ email, role: 'admin' }));
+    router.push('/calendar');
   };
 
   return (
@@ -89,10 +93,11 @@ export default function AcceptPage() {
         ) : (
           <button
             type="button"
-            onClick={() => setShowCodeInput(true)}
-            className="mt-6 text-center text-[12px] text-white/55 transition-colors hover:text-white"
+            onClick={handleManualCode}
+            disabled={isGenerating}
+            className="mt-6 text-center text-[12px] text-white/55 transition-colors hover:text-white disabled:opacity-50"
           >
-            Введите код вручную
+            {isGenerating ? "Генерация..." : "Введите код вручную"}
           </button>
         )}
 

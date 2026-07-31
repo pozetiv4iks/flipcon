@@ -62,11 +62,6 @@ export const BoardPage = () => {
       icon: <Sparkles size={14} className="text-blue-500" />,
       columnId: "todo"
     },
-    { 
-      id: "4", 
-      title: "Помыть пятки", 
-      columnId: "done" 
-    },
   ];
 
   const [columns, setColumns] = useState<Column[]>([

@@ -6,7 +6,6 @@ import { useLanguage } from "@/src/i18n/LanguageContext";
 import { Mail, Copy, Check } from "lucide-react";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
 import { Button } from "@/src/components/buttons/Buttons";
-import { companiesApi } from "@/src/services/api/companies";
 
 export default function OnboardingPage() {
   const { t } = useLanguage();
@@ -66,12 +65,8 @@ export default function OnboardingPage() {
   }, [currentStep]);
 
   const generateInvite = async () => {
-    try {
-      const response = await companiesApi.generateInvite();
-      setInviteUrl(response.inviteUrl);
-    } catch (error) {
-      console.error("Failed to generate invite", error);
-    }
+    // Simulation of success without backend
+    setInviteUrl("https://flipcon.app/join/mock-invite-code-123");
   };
 
   const handleCopy = () => {
