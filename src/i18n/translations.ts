@@ -41,12 +41,15 @@ export const translations = {
     calendar: {
       title: "Календарь",
       events: "События",
-      noEvents: "Нет событий",
+      noEvents: "Нет тасок",
       saveEvent: "Сохранить событие",
       participants: "Участники",
       setTime: "Установить время",
       description: "Описание",
       eventTitle: "Название",
+      assignees: "Исполнители",
+      everyone: "Все",
+      color: "Цвет",
       months: [
         "ЯНВАРЬ", "ФЕВРАЛЬ", "МАРТ", "АПРЕЛЬ", "МАЙ", "ИЮНЬ",
         "ИЮЛЬ", "АВГУСТ", "СЕНТЯБРЬ", "ОКТЯБРЬ", "НОЯБРЬ", "ДЕКАБРЬ"
@@ -107,6 +110,9 @@ export const translations = {
       username: "Имя пользователя",
       email: "Email",
       change: "Изменить",
+      team: "Команда",
+      roles: "Роли",
+      permissions: "Доступы",
     },
     auth: {
       login: "Войти в аккаунт",
@@ -173,12 +179,15 @@ export const translations = {
     calendar: {
       title: "Calendar",
       events: "Events",
-      noEvents: "No events",
+      noEvents: "No tasks",
       saveEvent: "Save Event",
       participants: "Participants",
       setTime: "Set Time",
       description: "Description",
       eventTitle: "Title",
+      assignees: "Assignees",
+      everyone: "Everyone",
+      color: "Color",
       months: [
         "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
         "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
@@ -239,6 +248,9 @@ export const translations = {
       username: "Username",
       email: "Email",
       change: "Change",
+      team: "Team",
+      roles: "Roles",
+      permissions: "Permissions",
     },
     auth: {
       login: "Log in to Account",

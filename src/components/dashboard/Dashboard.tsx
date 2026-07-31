@@ -16,7 +16,10 @@ import {
   BarChart3,
   Settings2,
   GripVertical,
-  Trash2
+  Trash2,
+  Users,
+  Wallet,
+  Shield
 } from "lucide-react";
 
 // --- Types ---
@@ -205,6 +208,44 @@ const StatsWidget = () => {
   );
 };
 
+const AccountantStatsWidget = () => {
+  const { t } = useLanguage();
+  return (
+    <div className="rounded-[24px] border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm group relative">
+      <h3 className="mb-6 text-[16px] font-semibold text-white">Статистика по команде</h3>
+      <div className="space-y-5">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
+              <Clock size={16} />
+            </div>
+            <span className="text-[13px] text-white/60">Логов за месяц</span>
+          </div>
+          <span className="text-[18px] font-black text-white">24</span>
+        </div>
+        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400">
+              <Wallet size={16} />
+            </div>
+            <span className="text-[13px] text-white/60">Денег за месяц</span>
+          </div>
+          <span className="text-[18px] font-black text-white">$21,300</span>
+        </div>
+        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
+              <Users size={16} />
+            </div>
+            <span className="text-[13px] text-white/60">Сотрудников</span>
+          </div>
+          <span className="text-[18px] font-black text-white">12</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- Main Dashboard Component ---
 
 export const Dashboard = () => {
@@ -213,6 +254,29 @@ export const Dashboard = () => {
   const [rightWidgets, setRightWidgets] = useState<string[]>(["calendar", "stats"]);
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [userRole, setUserRole] = useState<string>("developer");
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    setUserRole(user?.role || "developer");
+    setMounted(true);
+  }, []);
+
+  const defaultPermissions: Record<string, { widgets: string[] }> = {
+    admin: { widgets: ["activity", "tasks", "calendar", "stats", "acc_stats", "permissions_widget"] },
+    manager: { widgets: ["activity", "tasks", "calendar", "stats"] },
+    accountant: { widgets: ["calendar", "stats", "acc_stats"] },
+    teamlead: { widgets: ["activity", "tasks", "calendar", "stats"] },
+    developer: { widgets: ["activity", "tasks", "calendar"] },
+    hr: { widgets: ["calendar", "stats"] }
+  };
+
+  const permissions = typeof window !== 'undefined' 
+    ? JSON.parse(localStorage.getItem('role-permissions') || JSON.stringify(defaultPermissions))
+    : defaultPermissions;
+
+  const rolePermissions = permissions[userRole] || permissions.developer;
 
   const allWidgets: Record<string, Widget> = {
     activity: { 
@@ -243,7 +307,41 @@ export const Dashboard = () => {
       component: <StatsWidget />,
       defaultColumn: "right"
     },
+    acc_stats: { 
+      id: "acc_stats", 
+      title: "Статистика по команде", 
+      icon: <Users size={18} />, 
+      component: <AccountantStatsWidget />,
+      defaultColumn: "right"
+    },
+    permissions_widget: {
+      id: "permissions_widget",
+      title: "Управление доступом",
+      icon: <Shield size={18} />,
+      component: (
+        <div className="rounded-[24px] border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm group relative">
+          <h3 className="mb-4 text-[16px] font-semibold text-white">Управление проектом</h3>
+          <p className="text-[13px] text-white/40 mb-6">Быстрый доступ к настройкам ролей и прав вашей команды.</p>
+          <button 
+            onClick={() => window.location.href = '/settings'}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-500 py-3 text-[13px] font-bold text-white transition-all hover:bg-blue-600"
+          >
+            Настроить доступы
+          </button>
+        </div>
+      ),
+      defaultColumn: "left"
+    }
   };
+
+  const filteredWidgets = Object.keys(allWidgets).filter(id => rolePermissions.widgets?.includes(id));
+  
+  useEffect(() => {
+    if (mounted) {
+      setLeftWidgets(prev => prev.filter(id => rolePermissions.widgets?.includes(id)));
+      setRightWidgets(prev => prev.filter(id => rolePermissions.widgets?.includes(id)));
+    }
+  }, [mounted, userRole]);
 
   // ... rest of the component
 
@@ -441,9 +539,11 @@ export const Dashboard = () => {
               </button>
             </div>
             <div className="space-y-3">
-              {Object.values(allWidgets).map(widget => (
-                <button
-                  key={widget.id}
+              {Object.values(allWidgets)
+                .filter(w => rolePermissions.widgets?.includes(w.id))
+                .map(widget => (
+                  <button
+                    key={widget.id}
                   onClick={() => {
                     if (!activeWidgets.includes(widget.id)) {
                       addWidget(widget.id);

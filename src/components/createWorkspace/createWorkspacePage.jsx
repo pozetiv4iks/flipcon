@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/src/i18n/LanguageContext";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Users, UserCircle } from "lucide-react";
 import { Button } from "@/src/components/buttons/Buttons";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
 import { LoadingScreen } from "@/src/components/loading/LoadingScreen";
+import { CustomSelect } from "@/src/components/select/CustomSelect";
 
 const pageBgClass =
   "flex h-[100dvh] w-full flex-col overflow-hidden text-white";
@@ -145,75 +146,23 @@ export default function CreateWorkspacePage() {
               {/* Team Size */}
               <div className={inputWrapperClass}>
                 <label className={labelClass}>Сколько людей в команде?</label>
-                <div className={selectWrapperClass}>
-                  <button
-                    type="button"
-                    onClick={() => toggleDropdown('teamSize')}
-                    className={`${selectButtonClass} ${openDropdown === 'teamSize' ? 'rounded-b-none border-b-0' : ''}`}
-                  >
-                    <span className={teamSize ? "text-white" : "text-white/50"}>
-                      {teamSize || "Выбрать размер команды"}
-                    </span>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${openDropdown === 'teamSize' ? 'rotate-180' : ''}`} />
-                  </button>
-                  
-                  {openDropdown === 'teamSize' && (
-                    <div className="absolute left-0 top-full z-50 w-full overflow-hidden rounded-b-xl border border-t-0 border-white/15 bg-[#0D0D0D] backdrop-blur-xl">
-                      <div className="max-h-[160px] overflow-y-auto custom-scrollbar">
-                        {teamSizeOptions.map((option, idx) => (
-                          <button
-                            key={option}
-                            type="button"
-                            className={`flex h-9 w-full items-center px-4 text-[12px] text-white/70 transition-colors hover:bg-white/5 hover:text-white ${idx !== teamSizeOptions.length - 1 ? 'border-b border-white/5' : ''}`}
-                            onClick={() => {
-                              setTeamSize(option);
-                              setOpenDropdown(null);
-                            }}
-                          >
-                            {option}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <CustomSelect 
+                  options={teamSizeOptions.map(o => ({ id: o, label: o }))}
+                  value={teamSize}
+                  onChange={setTeamSize}
+                  placeholder="Выбрать размер команды"
+                />
               </div>
 
               {/* Role */}
               <div className={inputWrapperClass}>
                 <label className={labelClass}>Какая у вас роль в команде?</label>
-                <div className={selectWrapperClass}>
-                  <button
-                    type="button"
-                    onClick={() => toggleDropdown('role')}
-                    className={`${selectButtonClass} ${openDropdown === 'role' ? 'rounded-b-none border-b-0' : ''}`}
-                  >
-                    <span className={role ? "text-white" : "text-white/50"}>
-                      {role || "Выбрать свою роль в команде"}
-                    </span>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${openDropdown === 'role' ? 'rotate-180' : ''}`} />
-                  </button>
-
-                  {openDropdown === 'role' && (
-                    <div className="absolute left-0 top-full z-50 w-full overflow-hidden rounded-b-xl border border-t-0 border-white/15 bg-[#0D0D0D] backdrop-blur-xl">
-                      <div className="max-h-[160px] overflow-y-auto custom-scrollbar">
-                        {roleOptions.map((option, idx) => (
-                          <button
-                            key={option}
-                            type="button"
-                            className={`flex h-9 w-full items-center px-4 text-[12px] text-white/70 transition-colors hover:bg-white/5 hover:text-white ${idx !== roleOptions.length - 1 ? 'border-b border-white/5' : ''}`}
-                            onClick={() => {
-                              setRole(option);
-                              setOpenDropdown(null);
-                            }}
-                          >
-                            {option}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <CustomSelect 
+                  options={roleOptions.map(o => ({ id: o, label: o }))}
+                  value={role}
+                  onChange={setRole}
+                  placeholder="Выбрать свою роль в команде"
+                />
               </div>
             </form>
           </div>

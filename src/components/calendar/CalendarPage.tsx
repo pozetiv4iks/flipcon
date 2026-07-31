@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 // --- Types ---
-type EventType = "push-up" | "news" | "event";
+type EventType = "push-up" | "news" | "event" | "task";
 
 interface CalendarEvent {
   id: string;
@@ -28,6 +28,17 @@ interface CalendarEvent {
   date: string; // YYYY-MM-DD
   description?: string;
   participants?: string[];
+  assigneeId?: string;
+  assignees?: string[]; // IDs of selected users
+  isEveryone?: boolean;
+  color?: string; // Hex or CSS class
+}
+
+interface User {
+  id: string;
+  name: string;
+  avatar?: string;
+  role: string;
 }
 
 // --- Mock Data ---
@@ -82,12 +93,14 @@ const eventColors: Record<EventType, string> = {
   "push-up": "bg-[#E2F5D6] text-[#2D4A1E]",
   "news": "bg-[#E8E4FF] text-[#3B3486]",
   "event": "bg-[#FFE8E4] text-[#863B34]",
+  "task": "bg-blue-500/20 text-blue-400 border border-blue-500/30",
 };
 
 const eventBorderColors: Record<EventType, string> = {
   "push-up": "border-[#C5E8AF]",
   "news": "border-[#D1CCFF]",
   "event": "border-[#FFD1CC]",
+  "task": "border-blue-500/30",
 };
 
 export const CalendarPage = () => {
@@ -99,6 +112,10 @@ export const CalendarPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [tempYear, setTempYear] = useState(2026);
+  const [allEvents, setAllEvents] = useState<CalendarEvent[]>([]);
+  const [boardCards, setBoardCards] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -106,6 +123,42 @@ export const CalendarPage = () => {
     setCurrentDate(now);
     setSelectedDate(now);
     setToday(now);
+
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser));
+    }
+    
+    // Load mock users (in real app from API/localStorage)
+    const mockUsers: User[] = [
+      { id: "u1", name: "Stepan Dyleuski", role: "admin" },
+      { id: "u2", name: "Иван Иванов", role: "developer" },
+      { id: "u3", name: "Мария Сидорова", role: "accountant" },
+    ];
+    setUsers(mockUsers);
+    
+    // Load cards from board
+    const savedCards = localStorage.getItem('flipcon-board-cards');
+    let cardEvents: CalendarEvent[] = [];
+    if (savedCards) {
+      const cards = JSON.parse(savedCards);
+      setBoardCards(cards);
+      
+      cardEvents = cards
+        .filter((c: any) => c.dueDate)
+        .map((c: any) => ({
+          id: `card-${c.id}`,
+          title: c.title,
+          type: "task",
+          startTime: c.dueTime || "09:00",
+          date: c.dueDate,
+          description: c.description,
+          assigneeId: c.assigneeId
+        }));
+    }
+    
+    setAllEvents([...mockEvents, ...cardEvents]);
+    
     setMounted(true);
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -117,6 +170,37 @@ export const CalendarPage = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const [eventTitle, setEventTitle] = useState("");
+  const [eventDescription, setEventDescription] = useState("");
+  const [eventColor, setEventColor] = useState("#E8E4FF");
+  const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
+  const [isEveryone, setIsEveryone] = useState(false);
+
+  const handleSaveEvent = () => {
+    if (!eventTitle.trim()) return;
+    
+    const newEvent: CalendarEvent = {
+      id: Date.now().toString(),
+      title: eventTitle,
+      type: "event",
+      startTime: "12:00",
+      date: formatDate(selectedDate),
+      description: eventDescription,
+      assignees: isEveryone ? [] : selectedAssignees,
+      isEveryone: isEveryone,
+      color: eventColor
+    };
+
+    const updatedEvents = [...allEvents, newEvent];
+    setAllEvents(updatedEvents);
+    setEventTitle("");
+    setEventDescription("");
+    setSelectedAssignees([]);
+    setIsEveryone(false);
+  };
+
+  const canCreateEvent = currentUser?.role === 'admin' || currentUser?.role === 'teamlead';
 
   const daysOfWeek = t.calendar.weekdays;
   const months = t.calendar.months;
@@ -146,7 +230,7 @@ export const CalendarPage = () => {
   };
 
   const selectedDateStr = formatDate(selectedDate);
-  const dayEvents = mockEvents.filter(e => e.date === selectedDateStr);
+  const dayEvents = allEvents.filter(e => e.date === selectedDateStr);
 
   return (
     <div className="flex h-screen text-white overflow-hidden">
@@ -201,8 +285,15 @@ export const CalendarPage = () => {
                         {isSelected ? (
                           <div className="space-y-3">
                             {dayEvents.length > 0 ? dayEvents.map(event => (
-                              <div key={event.id} className={`p-4 rounded-2xl ${eventColors[event.type]} relative group`}>
-                                <button className="absolute top-3 right-3 opacity-0 group-hover:opacity-40 hover:opacity-100 transition-opacity">
+                              <div 
+                                key={event.id} 
+                                className={`p-4 rounded-2xl relative group ${event.color ? '' : eventColors[event.type]}`}
+                                style={event.color ? { backgroundColor: `${event.color}20`, color: event.color, border: `1px solid ${event.color}40` } : {}}
+                              >
+                                <button 
+                                  onClick={() => setAllEvents(allEvents.filter(e => e.id !== event.id))}
+                                  className="absolute top-3 right-3 opacity-0 group-hover:opacity-40 hover:opacity-100 transition-opacity"
+                                >
                                   <X size={14} />
                                 </button>
                                 <p className="text-[14px] font-bold mb-1">{event.title}</p>
@@ -210,18 +301,44 @@ export const CalendarPage = () => {
                                   <Clock size={12} />
                                   <span>{event.startTime} {event.endTime ? `- ${event.endTime}` : ''}</span>
                                 </div>
-                                {event.participants && (
-                                  <div className="mt-3 flex items-center gap-2">
-                                    <p className="text-[11px] font-medium opacity-60">{t.calendar.participants}</p>
-                                    <div className="flex -space-x-2">
-                                      {[1, 2, 3].map(i => (
-                                        <div key={i} className="h-6 w-6 rounded-full border-2 border-white/20 bg-black/20 flex items-center justify-center text-[10px]">
-                                          +
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
+                                {event.description && (
+                                  <p className="mt-2 text-[12px] opacity-60 leading-relaxed">{event.description}</p>
                                 )}
+                                {(event.participants || event.assigneeId || event.assignees || event.isEveryone) ? (
+                                  <div className="mt-3 flex items-center gap-2">
+                                    <p className="text-[11px] font-medium opacity-60">
+                                      {event.type === 'task' ? 'Исполнитель:' : 'Участники:'}
+                                    </p>
+                                    {event.isEveryone ? (
+                                      <div className="h-6 px-2 rounded-lg bg-black/20 flex items-center justify-center text-[10px] font-bold">
+                                        Все участники
+                                      </div>
+                                    ) : event.assigneeId ? (
+                                      <div className="h-6 px-2 rounded-lg bg-black/20 flex items-center justify-center text-[10px] font-bold">
+                                        {users.find(u => u.id === event.assigneeId)?.name || 'Неизвестно'}
+                                      </div>
+                                    ) : event.assignees && event.assignees.length > 0 ? (
+                                      <div className="flex -space-x-2">
+                                        {event.assignees.map(id => {
+                                          const user = users.find(u => u.id === id);
+                                          return (
+                                            <div key={id} className="h-6 w-6 rounded-full border-2 border-white/20 bg-black/20 flex items-center justify-center text-[10px] font-bold" title={user?.name}>
+                                              {user?.name.split(' ').map(n => n[0]).join('')}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    ) : event.participants ? (
+                                      <div className="flex -space-x-2">
+                                        {event.participants.map((p, i) => (
+                                          <div key={i} className="h-6 w-6 rounded-full border-2 border-white/20 bg-black/20 flex items-center justify-center text-[10px]">
+                                            +
+                                          </div>
+                                        ))}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                ) : null}
                               </div>
                             )) : (
                               <div className="h-20 flex items-center justify-center border border-dashed border-white/10 rounded-2xl text-white/20 text-[13px]">
@@ -250,57 +367,109 @@ export const CalendarPage = () => {
           )}
 
           {/* Create Event Form */}
-          <div className="mt-auto bg-black/40 p-8 border-t border-white/5">
-            <div className="flex gap-4 mb-6">
-              {["Event", "Push up", "News", "Email"].map((tab, i) => (
-                <button key={tab} className={`text-[12px] font-bold pb-1 border-b-2 ${i === 0 ? 'border-white text-white' : 'border-transparent text-white/30'}`}>
-                  {tab}
-                </button>
-              ))}
-            </div>
-            
-            <div className="space-y-6">
-              <div>
-                <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-2">{t.calendar.eventTitle}</label>
-                <input 
-                  type="text" 
-                  placeholder="New Opening" 
-                  className="w-full bg-transparent border-b border-white/10 py-2 text-[14px] outline-none focus:border-white transition-colors"
-                />
+          {canCreateEvent ? (
+            <div className="mt-auto bg-black/40 p-8 border-t border-white/5">
+              <div className="flex gap-4 mb-6">
+                {["Event", "Push up", "News", "Email"].map((tab, i) => (
+                  <button key={tab} className={`text-[12px] font-bold pb-1 border-b-2 ${i === 0 ? 'border-white text-white' : 'border-transparent text-white/30'}`}>
+                    {tab}
+                  </button>
+                ))}
               </div>
               
-              <div>
-                <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-2">{t.calendar.description}</label>
-                <input 
-                  type="text" 
-                  className="w-full bg-transparent border-b border-white/10 py-2 text-[14px] outline-none focus:border-white transition-colors"
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
+              <div className="space-y-6">
                 <div>
-                  <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-1">{t.calendar.setTime}</label>
-                  <p className="text-[13px]">15th August at 12:00</p>
+                  <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-2">{t.calendar.eventTitle}</label>
+                  <input 
+                    type="text" 
+                    placeholder="Название события..." 
+                    value={eventTitle}
+                    onChange={(e) => setEventTitle(e.target.value)}
+                    className="w-full bg-transparent border-b border-white/10 py-2 text-[14px] outline-none focus:border-white transition-colors"
+                  />
                 </div>
-                <CalendarIcon size={16} className="text-white/30" />
-              </div>
+                
+                <div>
+                  <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-2">{t.calendar.description}</label>
+                  <textarea 
+                    value={eventDescription}
+                    onChange={(e) => setEventDescription(e.target.value)}
+                    className="w-full bg-transparent border-b border-white/10 py-2 text-[14px] outline-none focus:border-white transition-colors resize-none"
+                    rows={1}
+                  />
+                </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex -space-x-2">
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="h-8 w-8 rounded-full border-2 border-[#040035] bg-white/10" />
-                  ))}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-2">{t.calendar.color}</label>
+                    <div className="flex flex-wrap gap-2">
+                      {["#E8E4FF", "#FFE8E4", "#E2F5D6", "#E4F5FF", "#FFF7E4"].map(c => (
+                        <button
+                          key={c}
+                          onClick={() => setEventColor(c)}
+                          className={`h-6 w-6 rounded-full border-2 transition-all ${eventColor === c ? 'border-white scale-110' : 'border-transparent hover:scale-105'}`}
+                          style={{ backgroundColor: c }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-2">{t.calendar.assignees}</label>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => setIsEveryone(!isEveryone)}
+                        className={`text-[10px] font-bold px-2 py-1 rounded-lg border transition-all ${isEveryone ? 'bg-white text-black border-white' : 'border-white/10 text-white/40 hover:border-white/20'}`}
+                      >
+                        {t.calendar.everyone}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <button className="h-8 w-8 rounded-full border border-white/20 flex items-center justify-center text-white/40 hover:text-white hover:border-white transition-colors">
-                  <Plus size={16} />
+
+                {!isEveryone && (
+                  <div className="flex flex-wrap gap-2">
+                    {users.map(user => (
+                      <button
+                        key={user.id}
+                        onClick={() => {
+                          if (selectedAssignees.includes(user.id)) {
+                            setSelectedAssignees(selectedAssignees.filter(id => id !== user.id));
+                          } else {
+                            setSelectedAssignees([...selectedAssignees, user.id]);
+                          }
+                        }}
+                        className={`flex items-center gap-2 px-2 py-1 rounded-lg border transition-all ${selectedAssignees.includes(user.id) ? 'bg-blue-500 text-white border-blue-500' : 'border-white/10 text-white/40 hover:border-white/20'}`}
+                      >
+                        <div className="h-4 w-4 rounded-full bg-white/10 flex items-center justify-center text-[8px] font-bold">
+                          {user.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <span className="text-[10px]">{user.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-[11px] text-white/30 uppercase tracking-widest block mb-1">{t.calendar.setTime}</label>
+                    <p className="text-[13px]">{selectedDate.getDate()} {months[selectedDate.getMonth()]}, 12:00</p>
+                  </div>
+                  <CalendarIcon size={16} className="text-white/30" />
+                </div>
+
+                <button 
+                  onClick={handleSaveEvent}
+                  className="w-full bg-[#E8E4FF] text-[#3B3486] font-bold py-4 rounded-xl text-[14px] hover:brightness-105 active:scale-[0.98] transition-all"
+                >
+                  {t.calendar.saveEvent}
                 </button>
               </div>
-
-              <button className="w-full bg-[#E8E4FF] text-[#3B3486] font-bold py-4 rounded-xl text-[14px] hover:brightness-105 active:scale-[0.98] transition-all">
-                {t.calendar.saveEvent}
-              </button>
             </div>
-          </div>
+          ) : (
+            <div className="mt-auto bg-black/40 p-8 border-t border-white/5">
+              <p className="text-[13px] text-white/20 italic text-center">У вас недостаточно прав для создания событий</p>
+            </div>
+          )}
         </aside>
 
 
@@ -396,14 +565,13 @@ export const CalendarPage = () => {
                     </div>
                   ))}
 
-                  {/* Current month days */}
-                  {Array.from({ length: daysInMonth }).map((_, i) => {
-                    const day = i + 1;
-                    const dateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-                    const dateStr = formatDate(dateObj);
-                    const isSelected = selectedDate.getDate() === day && selectedDate.getMonth() === currentDate.getMonth();
-                    const isToday = day === today.getDate() && currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear();
-                    const events = mockEvents.filter(e => e.date === dateStr);
+                    {Array.from({ length: daysInMonth }).map((_, i) => {
+                      const day = i + 1;
+                      const dateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+                      const dateStr = formatDate(dateObj);
+                      const isSelected = selectedDate.getDate() === day && selectedDate.getMonth() === currentDate.getMonth();
+                      const isToday = day === today.getDate() && currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear();
+                      const events = allEvents.filter(e => e.date === dateStr);
 
                     return (
                       <div 
@@ -438,7 +606,8 @@ export const CalendarPage = () => {
                           {events.slice(0, 3).map(event => (
                             <div 
                               key={event.id} 
-                              className={`px-2 py-1.5 rounded-lg border-l-4 ${eventColors[event.type]} ${eventBorderColors[event.type]} text-[10px] font-bold truncate`}
+                              className={`px-2 py-1.5 rounded-lg border-l-4 text-[10px] font-bold truncate ${event.color ? '' : eventColors[event.type]} ${event.color ? '' : eventBorderColors[event.type]}`}
+                              style={event.color ? { backgroundColor: `${event.color}20`, color: event.color, borderLeftColor: event.color } : {}}
                             >
                               {event.title}
                             </div>

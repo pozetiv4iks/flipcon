@@ -17,30 +17,45 @@ import {
 } from "lucide-react";
 import { AuthPageLogo } from "@/src/components/login/AuthPageLogo";
 import { ProjectSwitcher } from "./ProjectSwitcher";
+import { RoleSwitcher } from "./RoleSwitcher";
 
 export const Sidebar = () => {
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const pathname = usePathname();
 
-  // In a real app, this would check permissions
   const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null;
-  const isAdmin = user?.role === 'admin';
+  
+  // Default permissions if not set in localStorage
+  const defaultPermissions: Record<string, { tabs: string[] }> = {
+    admin: { tabs: ["/calendar", "/table", "/", "/ai-assistant", "/ai-insights", "/timelogs", "/team", "/settings", "/analytics"] },
+    manager: { tabs: ["/calendar", "/table", "/", "/ai-assistant", "/ai-insights", "/timelogs", "/settings", "/analytics"] },
+    accountant: { tabs: ["/calendar", "/table", "/", "/timelogs", "/settings"] }, // No AI Analytics by default
+    teamlead: { tabs: ["/calendar", "/table", "/", "/ai-assistant", "/ai-insights", "/timelogs", "/team", "/settings"] },
+    developer: { tabs: ["/calendar", "/table", "/", "/ai-assistant", "/timelogs", "/settings"] },
+    hr: { tabs: ["/calendar", "/", "/timelogs", "/team", "/settings"] }
+  };
+
+  const permissions = typeof window !== 'undefined' 
+    ? JSON.parse(localStorage.getItem('role-permissions') || JSON.stringify(defaultPermissions))
+    : defaultPermissions;
+
+  const rolePermissions = permissions[user?.role] || permissions.developer;
 
   const navItems = [
+    { icon: Activity, label: t.sidebar.dashboard, href: "/" },
     { icon: Calendar, label: t.sidebar.calendar, href: "/calendar" },
     { icon: LayoutGrid, label: t.sidebar.board, href: "/table" },
-    { icon: Activity, label: t.sidebar.dashboard, href: "/" },
     { icon: Bot, label: t.sidebar.aiAssistant, href: "/ai-assistant" },
     { icon: Zap, label: "AI Аналитика", href: "/ai-insights" },
     { icon: Clock, label: "Таймлоги", href: "/timelogs" },
-    ...(isAdmin ? [{ icon: Users, label: "Команда", href: "/team" }] : []),
-  ];
+    { icon: Users, label: "Команда", href: "/team" },
+  ].filter(item => item.href === "/" || rolePermissions.tabs.includes(item.href));
 
   const bottomItems = [
     { icon: Settings, label: t.sidebar.settings, href: "/settings" },
     { icon: BarChart3, label: "Аналитика", href: "/analytics" },
-  ];
+  ].filter(item => rolePermissions.tabs.includes(item.href));
 
   return (
     <aside
@@ -68,6 +83,7 @@ export const Sidebar = () => {
       </div>
       
       <ProjectSwitcher isHovered={isHovered} />
+      <RoleSwitcher isHovered={isHovered} />
 
       <nav className="mt-8 flex-1 space-y-4 px-[14px]">
         {navItems.map((item) => {

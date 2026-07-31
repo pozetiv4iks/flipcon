@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { UserPlus, Copy, Check, Trash2, Shield } from "lucide-react";
+import { UserPlus, Copy, Check, Trash2, Shield, Plus } from "lucide-react";
 import { useToast } from "@/src/components/notifications/ToastContext";
 import { Button } from "@/src/components/buttons/Buttons";
 import { Input } from "@/src/components/inputs/Input";
+import { CustomSelect } from "@/src/components/select/CustomSelect";
 
 interface TeamMember {
   id: string;
@@ -44,8 +45,25 @@ export const TeamPage = () => {
   const [customRoles, setCustomRoles] = useState<string[]>([]);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [role, setRole] = useState(ROLES[0]);
+  const [role, setRole] = useState("developer");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const baseRoles = [
+    { id: 'admin', name: 'Администратор' },
+    { id: 'manager', name: 'Менеджер' },
+    { id: 'accountant', name: 'Бухгалтер' },
+    { id: 'teamlead', name: 'Тимлид' },
+    { id: 'developer', name: 'Разработчик' },
+    { id: 'hr', name: 'HR' }
+  ];
+
+  const [roles, setRoles] = useState(baseRoles);
+
+  React.useEffect(() => {
+    const savedCustomRoles = localStorage.getItem('custom-roles');
+    const customRolesList = savedCustomRoles ? JSON.parse(savedCustomRoles) : [];
+    setRoles([...baseRoles, ...customRolesList]);
+  }, []);
 
   // New Role Creation State
   const [isCreatingRole, setIsCreatingRole] = useState(false);
@@ -153,25 +171,21 @@ export const TeamPage = () => {
           </div>
           <div className="space-y-2">
             <label className="text-[12px] font-bold text-white/35 uppercase ml-1 tracking-wider">Роль</label>
-            <select
+            <CustomSelect 
+              options={[
+                ...roles.map(r => ({ id: r.id, label: r.name })),
+                { id: "CREATE_NEW", label: "+ Создать новую роль", icon: <Plus size={14} className="text-blue-500" /> }
+              ]}
               value={role}
-              onChange={handleRoleChange}
-              className={`${inputBaseClass} cursor-pointer appearance-none`}
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'right 1rem center',
-                backgroundSize: '1em',
-                paddingRight: '2.5rem'
+              onChange={(val) => {
+                if (val === "CREATE_NEW") {
+                  setIsCreatingRole(true);
+                } else {
+                  setRole(val);
+                }
               }}
-            >
-              {[...ROLES, ...customRoles].map((r) => (
-                <option key={r} value={r} className="bg-[#1A1A1A]">
-                  {r}
-                </option>
-              ))}
-              <option value="CREATE_NEW" className="bg-[#1A1A1A] font-bold text-blue-400">+ Создать новую роль</option>
-            </select>
+              className="w-full"
+            />
           </div>
           <Button type="submit" text="Создать инвайт" className="h-[52px] w-full" />
         </form>
